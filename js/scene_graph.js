@@ -1,13 +1,11 @@
 function SceneGraph()
 {
-    this.modelViewMatrix = mat4.create();
-    this.perspectiveMatrix = mat4.create();
     this.matrixStack = [];
 }
 
-SceneGraph.prototype.push = function()
+SceneGraph.prototype.push = function(matrix)
 {
-    var copy = mat4.clone(this.modelViewMatrix);
+    var copy = mat4.clone(matrix);
     this.matrixStack.push(copy);
 }
 
@@ -17,5 +15,5 @@ SceneGraph.prototype.pop = function()
     {
         throw "SceneGraph: Matrix stack is empty!";
     }
-    this.modelViewMatrix = this.matrixStack.pop();
+    return this.matrixStack.pop();
 }

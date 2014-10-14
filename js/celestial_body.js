@@ -1,4 +1,4 @@
-function CelestialBody(latitudeBands, longitudeBands, radius, orbit, texture)
+function CelestialBody(latitudeBands, longitudeBands, radius, texture)
 {
     //long, lat and radius defining the sphere
     this.latitudeBands = latitudeBands;
@@ -18,11 +18,11 @@ function CelestialBody(latitudeBands, longitudeBands, radius, orbit, texture)
     this.rotY = 0;
     this.rotZ = 0;
 
-    this.rotXSpeed = 0;
-    this.rotYSpeed = 0;
-
-    this.orbit = orbit;
-    this.orbitTheta = 0;
+    this.positionVector = vec3.fromValues(0,0,0);
+    this.rotation = vec3.fromValues(0,0,0);
+    this.rotationSpeed = vec3.fromValues(0,0,0);
+    this.orbitRotation = vec3.fromValues(0,0,0);
+    this.orbitRotationSpeed = vec3.fromValues(0,0,0);
 
     this.orbitals = [];
 }
@@ -40,16 +40,16 @@ CelestialBody.prototype.initBuffers = function()
 CelestialBody.prototype.draw = function(modelViewMatrix)
 {
 
-    if (this.orbit)
-    {
-        mat4.rotateY(modelViewMatrix, modelViewMatrix, this.orbitTheta);
-    }
+    mat4.rotateX(modelViewMatrix, modelViewMatrix, this.orbitRotation[0]);
+    mat4.rotateY(modelViewMatrix, modelViewMatrix, this.orbitRotation[1]);
+    mat4.rotateZ(modelViewMatrix, modelViewMatrix, this.orbitRotation[2]);
 
     mat4.translate(modelViewMatrix, modelViewMatrix, this.positionVector);
 
-    scene.push();
-    mat4.rotateX(modelViewMatrix, modelViewMatrix, this.rotX);
-    mat4.rotateY(modelViewMatrix, modelViewMatrix, this.rotY);
+    scene.push(modelViewMatrix);
+    mat4.rotateX(modelViewMatrix, modelViewMatrix, this.rotation[0]);
+    mat4.rotateY(modelViewMatrix, modelViewMatrix, this.rotation[1]);
+    mat4.rotateZ(modelViewMatrix, modelViewMatrix, this.rotation[2]);
 
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, this.texture);
@@ -62,7 +62,7 @@ CelestialBody.prototype.draw = function(modelViewMatrix)
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.vertexIndexBuffer);
     setMatrixUniforms(modelViewMatrix);
     gl.drawElements(gl.TRIANGLES, this.vertexIndexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
-    scene.pop();
+    modelViewMatrix = scene.pop();
 
     this.drawOrbitals(modelViewMatrix);
 }
@@ -77,19 +77,25 @@ CelestialBody.prototype.drawOrbitals = function(modelViewMatrix)
 
 CelestialBody.prototype.animate = function(delta)
 {
-    this.rotX += degToRad((this.rotXSpeed*delta) / 1000.0);
-    this.rotY += degToRad((this.rotYSpeed*delta) / 1000.0);
+    var deltaRotation = vec3.create();
+    vec3.scale(deltaRotation, this.rotationSpeed, delta / 1000.0);
+    vec3.scale(deltaRotation, deltaRotation,  Math.PI / 180);
+    vec3.add(this.rotation, this.rotation, deltaRotation);
 
-    if(this.orbit)
-    {
-        this.orbitTheta += degToRad((45*delta) / 1000.0);
-    }
+    var deltaOrbit = vec3.create();
+    vec3.scale(deltaOrbit, this.orbitRotationSpeed, delta / 1000.0);
+    vec3.scale(deltaOrbit, deltaOrbit,  Math.PI / 180);
+    vec3.add(this.orbitRotation, this.orbitRotation, deltaOrbit);
 }
 
-CelestialBody.prototype.setRotationSpeed = function(x,y)
+CelestialBody.prototype.setRotationSpeed = function(rotationSpeedVector)
 {
-    this.rotXSpeed = x;
-    this.rotYSpeed = y;
+    this.rotationSpeed = rotationSpeedVector;
+}
+
+CelestialBody.prototype.setOrbitRotationSpeed = function(rotationSpeedVector)
+{
+    this.orbitRotationSpeed = rotationSpeedVector;
 }
 
 CelestialBody.prototype.setPositionVector = function(position)

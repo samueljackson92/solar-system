@@ -3,7 +3,7 @@ var shaderProgram;
 
 var scene;
 var perspectiveMatrix;
-var modelViewMatrix;
+var mvMatrix;
 
 var moon;
 var miniMoon;
@@ -16,16 +16,17 @@ function webGlStart()
 
     scene = new SceneGraph();
     perspectiveMatrix = mat4.create();
-    modelViewMatrix = mat4.create();
+    mvMatrix = mat4.create();
 
     var moonTexture = createTexture("img/moon.gif");
-    moon = new CelestialBody(30,30, 5, false, moonTexture);
+    moon = new CelestialBody(30,30, 5, moonTexture);
     moon.setPositionVector([0,0,-30]);
-    moon.setRotationSpeed(0,10);
+    moon.setRotationSpeed([0,10,0]);
 
-    miniMoon = new CelestialBody(30,30, 1, true, moonTexture);
+    miniMoon = new CelestialBody(30,30, 1, moonTexture);
     miniMoon.setPositionVector([10,0,0]);
-    miniMoon.setRotationSpeed(-30,90);
+    miniMoon.setRotationSpeed([0,0,30]);
+    miniMoon.setOrbitRotationSpeed([0,45,0]);
 
     moon.addOribtal(miniMoon);
 
@@ -108,11 +109,9 @@ function drawScene()
 
     var aspectRatio = gl.canvas.clientWidth / gl.canvas.clientHeight;
     mat4.perspective(perspectiveMatrix, 45, aspectRatio, 0.1, 100.0);
-    mat4.identity(scene.modelViewMatrix);
 
-    scene.push();
-    moon.draw(scene.modelViewMatrix);
-    scene.pop();
+    mat4.identity(mvMatrix);
+    moon.draw(mvMatrix);
 }
 
 function resizeViewport()
