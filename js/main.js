@@ -2,33 +2,49 @@ var gl;
 var shaderProgram;
 
 var scene;
+var camera;
 var perspectiveMatrix;
 var mvMatrix;
 
+var earth;
 var moon;
-var miniMoon;
+var sol;
 
 function webGlStart()
 {
     var canvas = document.getElementById("canvas");
     initWebGL(canvas);
 
+    document.onkeydown = handleKeyDown;
+    document.onkeyup = handleKeyUp;
 
     scene = new SceneGraph();
+    camera = new Camera();
+
     perspectiveMatrix = mat4.create();
     mvMatrix = mat4.create();
 
     var moonTexture = createTexture("img/moon.gif");
-    moon = new CelestialBody(30,30, 5, moonTexture);
-    moon.setPositionVector([0,0,-30]);
-    moon.setRotationSpeed([0,10,0]);
+    var earthTexture = createTexture("img/earthmap1k.jpg");
+    var sunTexture = createTexture("img/sunmap.jpg");
 
-    miniMoon = new CelestialBody(30,30, 1, moonTexture);
-    miniMoon.setPositionVector([10,0,0]);
-    miniMoon.setRotationSpeed([0,0,30]);
-    miniMoon.setOrbitRotationSpeed([0,45,0]);
+    sol = new CelestialBody(30,30,20, sunTexture);
+    sol.setRotationSpeed([0,15,0]);
+    sol.setPositionVector([0,0,-250]);
 
-    moon.addOribtal(miniMoon);
+    earth = new CelestialBody(30,30, 5, earthTexture);
+    earth.setOrbitParameters(0.001, 150, 0.1, 0);
+    earth.setRotationSpeed([0,25,0]);
+    // earth.setAxisTilt(-23);
+
+    moon = new CelestialBody(30,30, 1, moonTexture);
+    moon.setOrbitParameters(0.01, 8, 0.5, 0);
+    moon.setAxisTilt(-23);
+    moon.setRotationSpeed([0,35,0]);
+
+    earth.addOribtal(moon);
+
+    sol.addOribtal(earth);
 
     initShaders();
     initBuffers();
@@ -44,6 +60,7 @@ function initWebGL()
         gl = canvas.getContext('experimental-webgl');
         gl.clearColor(0.0, 0.0, 0.0, 1.0);
         gl.enable(gl.DEPTH_TEST);
+        gl.depthFunc(gl.LESS);
     }
     catch (e)
     {
@@ -53,8 +70,7 @@ function initWebGL()
 
 function initBuffers()
 {
-    moon.initBuffers();
-    miniMoon.initBuffers();
+    sol.initBuffers();
 }
 
 function initShaders()
@@ -89,14 +105,15 @@ function initShaders()
     shaderProgram.samplerUniform = gl.getUniformLocation(shaderProgram, "uSampler");
     shaderProgram.useLightingUniform = gl.getUniformLocation(shaderProgram, "uUseLighting");
     shaderProgram.ambientColorUniform = gl.getUniformLocation(shaderProgram, "uAmbientColor");
-    shaderProgram.lightingDirectionUniform = gl.getUniformLocation(shaderProgram, "uLightingDirection");
-    shaderProgram.directionalColorUniform = gl.getUniformLocation(shaderProgram, "uDirectionalColor");
+    shaderProgram.pointLightingLocationUniform = gl.getUniformLocation(shaderProgram, "uPointLightingLocation");
+    shaderProgram.pointLightingColorUniform = gl.getUniformLocation(shaderProgram, "uPointLightingColor");
 }
 
 function tick()
 {
     requestAnimFrame(tick);
     resizeViewport();
+    handleKeys();
     drawScene();
     animate();
 }
@@ -108,10 +125,18 @@ function drawScene()
     gl.uniform1i(shaderProgram.useLightingUniform, false);
 
     var aspectRatio = gl.canvas.clientWidth / gl.canvas.clientHeight;
-    mat4.perspective(perspectiveMatrix, 45, aspectRatio, 0.1, 100.0);
-
+    mat4.perspective(perspectiveMatrix, 45, aspectRatio, 0.1, 1000.0);
     mat4.identity(mvMatrix);
-    moon.draw(mvMatrix);
+
+    //lighting
+    gl.uniform1i(shaderProgram.useLightingUniform, true);
+    gl.uniform3f(shaderProgram.ambientColorUniform, 0.1, 0.1, 0.1);
+    gl.uniform3f(shaderProgram.pointLightingLocationUniform, 0, 0, -100);
+    gl.uniform3f(shaderProgram.pointLightingColorUniform, 3.0, 3.0, 3.0);
+
+    //camera corrections
+    camera.move(mvMatrix);
+    sol.draw(mvMatrix);
 }
 
 function resizeViewport()
@@ -132,8 +157,23 @@ function animate()
     if (lastTime != 0)
     {
         var delta = timeNow - lastTime;
-        moon.animate(delta);
-        miniMoon.animate(delta);
+        camera.update(delta);
+        sol.animate(delta);
     }
     lastTime = timeNow;
+}
+
+var currentlyPressedKeys = {};
+
+function handleKeys()
+{
+    camera.handleCameraKeys();
+}
+
+function handleKeyDown(event) {
+    currentlyPressedKeys[event.keyCode] = true;
+}
+
+function handleKeyUp(event) {
+    currentlyPressedKeys[event.keyCode] = false;
 }
