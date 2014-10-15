@@ -8,10 +8,18 @@ function Camera()
     this.theta = 0;
     this.phi = 0;
 
+    this.yaw = 0;
+    this.yawRate = 0;
+
     this.LEFT_KEY = 37;
     this.UP_KEY = 38;
     this.RIGHT_KEY = 39;
     this.DOWN_KEY = 40;
+
+    this.W_KEY = 87;
+    this.S_KEY = 83;
+    this.A_KEY = 65;
+    this.D_KEY = 68;
 }
 
 
@@ -22,11 +30,9 @@ Camera.prototype.handleCameraKeys = function handleKeys() {
         this.theta += -1;
     }
 
-    if (currentlyPressedKeys[87]) {
-        // Up cursor key or W
+    if (currentlyPressedKeys[this.W_KEY]) {
         this.speed = 0.1;
-    } else if (currentlyPressedKeys[83]) {
-        // Down cursor key
+    } else if (currentlyPressedKeys[this.S_KEY]) {
         this.speed = -0.1;
     } else {
         this.speed = 0;
@@ -39,6 +45,15 @@ Camera.prototype.handleCameraKeys = function handleKeys() {
     else if (currentlyPressedKeys[this.DOWN_KEY])
     {
         this.phi -= 1;
+    }
+
+    if(currentlyPressedKeys[this.A_KEY])
+    {
+        this.yaw += 1;
+    }
+    else if (currentlyPressedKeys[this.D_KEY])
+    {
+        this.yaw -= 1;
     }
 }
 
@@ -57,7 +72,7 @@ Camera.prototype.update = function(delta)
 
 Camera.prototype.move = function(modelViewMatrix)
 {
-    // mat4.rotate(modelViewMatrix, modelViewMatrix, degToRad(-this.pitch), [1, 0, 0]);
+    mat4.rotate(modelViewMatrix, modelViewMatrix, degToRad(-this.yaw), [0, 1, 0]);
     mat4.translate(modelViewMatrix, modelViewMatrix, [-this.xPos, -this.yPos, -this.zPos]);
     mat4.rotate(modelViewMatrix, modelViewMatrix, degToRad(this.theta), [0, 1, 0]);
     mat4.rotate(modelViewMatrix, modelViewMatrix, degToRad(this.phi), [0, 0, 1]);
