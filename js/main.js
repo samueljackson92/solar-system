@@ -37,14 +37,16 @@ function webGlStart()
     sol.addOribtal(mercury);
 
     venus = planetFactory.create(30,30, 5, textureLoader.textures["venus"]);
-    venus.setOrbitParameters(0.0001, 250, 0, 0);
+    venus.setOrbitParameters(0.0002, 250, 0, 0);
+    venus.setOrbitTilt(-5);
     sol.addOribtal(venus);
 
     //earth subsystem
     earth = planetFactory.create(30,30, 5, textureLoader.textures["earth"]);
-    earth.setOrbitParameters(0.0001, 350, 0, 0);
+    earth.setOrbitParameters(0.0003, 350, 0, 0);
     earth.setRotationSpeed([0,25,0]);
     earth.setAxisTilt(-23);
+    earth.setOrbitTilt(-10);
     sol.addOribtal(earth);
 
     moon = planetFactory.create(30,30, 1, textureLoader.textures["moon"]);
@@ -54,23 +56,28 @@ function webGlStart()
     earth.addOribtal(moon);
 
     mars = planetFactory.create(30,30, 5, textureLoader.textures["mars"]);
-    mars.setOrbitParameters(0.0001, 450, 0, 0);
+    mars.setOrbitParameters(0.0004, 450, 0, 0);
+    mars.setOrbitTilt(-15);
     sol.addOribtal(mars);
 
     jupiter = planetFactory.create(30,30, 10, textureLoader.textures["jupiter"]);
-    jupiter.setOrbitParameters(0.0001, 650, 0, 0);
+    jupiter.setOrbitParameters(0.0005, 650, 0, 0);
+    jupiter.setOrbitTilt(-20);
     sol.addOribtal(jupiter);
 
     saturn = planetFactory.create(30,30, 10, textureLoader.textures["saturn"]);
-    saturn.setOrbitParameters(0.0001, 750, 0, 0);
+    saturn.setOrbitParameters(0.0006, 750, 0, 0);
+    saturn.setOrbitTilt(-25);
     sol.addOribtal(saturn);
 
     uranus = planetFactory.create(30,30, 5, textureLoader.textures["uranus"]);
-    uranus.setOrbitParameters(0.0001, 850, 0, 0);
+    uranus.setOrbitParameters(0.0007, 850, 0, 0);
+    uranus.setOrbitTilt(-30);
     sol.addOribtal(uranus);
 
     neptune = planetFactory.create(30,30, 5, textureLoader.textures["uranus"]);
-    neptune.setOrbitParameters(0.0001, 950, 0, 0);
+    neptune.setOrbitParameters(0.0008, 950, 0, 0);
+    neptune.setOrbitTilt(-40);
     sol.addOribtal(neptune);
 
     solarSystem.addDrawableObject(sol);
