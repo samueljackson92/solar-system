@@ -1,7 +1,7 @@
 var gl;
 var shaderProgram;
 
-var scene;
+var solarSystem;
 var camera;
 var textureLoader;
 
@@ -20,7 +20,7 @@ function webGlStart()
     document.onkeydown = handleKeyDown;
     document.onkeyup = handleKeyUp;
 
-    scene = new SceneGraph();
+    solarSystem = new SceneGraph();
     camera = new Camera();
     textureLoader = new TextureLoader();
 
@@ -42,8 +42,9 @@ function webGlStart()
     moon.setRotationSpeed([0,35,0]);
 
     earth.addOribtal(moon);
-
     sol.addOribtal(earth);
+
+    solarSystem.addDrawableObject(sol);
 
     initShaders();
     initBuffers();
@@ -69,7 +70,7 @@ function initWebGL()
 
 function initBuffers()
 {
-    sol.initBuffers();
+    solarSystem.initBuffers();
 }
 
 function initShaders()
@@ -135,7 +136,7 @@ function drawScene()
 
     //camera corrections
     camera.move(mvMatrix);
-    sol.draw(mvMatrix);
+    solarSystem.drawScene(mvMatrix);
 }
 
 function resizeViewport()
@@ -157,7 +158,7 @@ function animate()
     {
         var delta = timeNow - lastTime;
         camera.update(delta);
-        sol.animate(delta);
+        solarSystem.animateScene(delta);
     }
     lastTime = timeNow;
 }

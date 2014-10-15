@@ -38,17 +38,16 @@ CelestialBody.prototype.initBuffers = function()
     this.vertexTextureCoordinateBuffer = createArrayBuffer(this.textureCoordinateData, 2);
     this.vertexNormalBuffer = createArrayBuffer(this.normalData, 3);
     this.vertexIndexBuffer = createElementArrayBuffer(this.indexData, 1);
-
-    this.initOrbitalBuffers();
 }
 
-CelestialBody.prototype.draw = function(modelViewMatrix)
+CelestialBody.prototype.drawSubSystem = function(modelViewMatrix)
 {
-    //tilt system
+    //tilt subsystem about it's orbital axis
     if (this.axisTilt != 0)
     {
         mat4.rotate(modelViewMatrix, modelViewMatrix, degToRad(this.axisTilt), [0,0,1]);
     }
+
     //orbit rotation
     var orbitVector = vec3.create();
     orbitVector[(this.orbitalAxis+1) % 3] = 1;
@@ -56,12 +55,6 @@ CelestialBody.prototype.draw = function(modelViewMatrix)
 
     //move body to position in scene
     mat4.translate(modelViewMatrix, modelViewMatrix, this.positionVector);
-
-    scene.push(modelViewMatrix);
-    this.drawOrbitals(modelViewMatrix);
-    modelViewMatrix = scene.pop();
-
-    this.drawBody(modelViewMatrix);
 }
 
 CelestialBody.prototype.drawBody = function(modelViewMatrix)
@@ -84,28 +77,9 @@ CelestialBody.prototype.drawBody = function(modelViewMatrix)
     gl.drawElements(gl.TRIANGLES, this.vertexIndexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
 }
 
-CelestialBody.prototype.initOrbitalBuffers = function()
+CelestialBody.prototype.getChildren = function()
 {
-    for(var i=0; i<this.orbitals.length; i++)
-    {
-        this.orbitals[i].initBuffers();
-    }
-}
-
-CelestialBody.prototype.drawOrbitals = function(modelViewMatrix)
-{
-    for(var i=0; i<this.orbitals.length; i++)
-    {
-        this.orbitals[i].draw(modelViewMatrix);
-    }
-}
-
-CelestialBody.prototype.animateOrbitals = function(delta)
-{
-    for(var i=0; i<this.orbitals.length; i++)
-    {
-        this.orbitals[i].animate(delta);
-    }
+    return this.orbitals;
 }
 
 CelestialBody.prototype.animate = function(delta)
@@ -116,7 +90,7 @@ CelestialBody.prototype.animate = function(delta)
     vec3.add(this.rotation, this.rotation, deltaRotation);
 
     this.orbit(delta);
-    this.animateOrbitals(delta);
+    // this.animateOrbitals(delta);
 }
 
 CelestialBody.prototype.orbit = function(delta)
