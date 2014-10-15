@@ -87,6 +87,7 @@ function CelestialBody(texture)
     this.orbitalAxis = 0;
 
     this.axisTilt = 0;
+    this.orbitTilt = 0;
     this.orbitals = [];
 }
 
@@ -101,9 +102,9 @@ CelestialBody.prototype.initBuffers = function()
 CelestialBody.prototype.drawSubSystem = function(modelViewMatrix)
 {
     //tilt subsystem about it's orbital axis
-    if (this.axisTilt != 0)
+    if (this.orbitTilt != 0)
     {
-        mat4.rotate(modelViewMatrix, modelViewMatrix, degToRad(this.axisTilt), [0,0,1]);
+        mat4.rotate(modelViewMatrix, modelViewMatrix, degToRad(this.orbitTilt), [0,0,1]);
     }
 
     //orbit rotation
@@ -117,6 +118,11 @@ CelestialBody.prototype.drawSubSystem = function(modelViewMatrix)
 
 CelestialBody.prototype.drawBody = function(modelViewMatrix)
 {
+    if (this.axisTilt != 0)
+    {
+        mat4.rotate(modelViewMatrix, modelViewMatrix, degToRad(this.axisTilt), [0,0,1]);
+    }
+
     //rotation about axis
     mat4.rotateX(modelViewMatrix, modelViewMatrix, this.rotation[0]);
     mat4.rotateY(modelViewMatrix, modelViewMatrix, this.rotation[1]);
@@ -179,6 +185,11 @@ CelestialBody.prototype.setOrbitParameters = function(angularVelocity, initialRa
 CelestialBody.prototype.setAxisTilt = function(tilt)
 {
     this.axisTilt = tilt;
+}
+
+CelestialBody.prototype.setOrbitTilt = function(tilt)
+{
+    this.orbitTilt = tilt;
 }
 
 CelestialBody.prototype.setOrbitRotationSpeed = function(rotationSpeedVector)

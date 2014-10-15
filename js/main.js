@@ -35,11 +35,11 @@ function webGlStart()
     earth = planetFactory.create(30,30, 5, textureLoader.textures["earth"]);
     earth.setOrbitParameters(0.001, 150, 0.1, 0);
     earth.setRotationSpeed([0,25,0]);
-    // earth.setAxisTilt(-23);
+    earth.setAxisTilt(-23);
 
     moon = planetFactory.create(30,30, 1, textureLoader.textures["moon"]);
     moon.setOrbitParameters(0.01, 8, 0.5, 0);
-    moon.setAxisTilt(-23);
+    moon.setOrbitTilt(-5.145);
     moon.setRotationSpeed([0,35,0]);
 
     earth.addOribtal(moon);
