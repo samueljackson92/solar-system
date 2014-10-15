@@ -20,6 +20,7 @@ function webGlStart()
     document.onkeydown = handleKeyDown;
     document.onkeyup = handleKeyUp;
 
+    var planetFactory = new CelestialBodyFactory();
     solarSystem = new SceneGraph();
     camera = new Camera();
     textureLoader = new TextureLoader();
@@ -27,23 +28,50 @@ function webGlStart()
     perspectiveMatrix = mat4.create();
     mvMatrix = mat4.create();
 
-    var planetFactory = new CelestialBodyFactory();
     sol = planetFactory.create(30,30,20, textureLoader.textures["sun"]);
-    sol.setPositionVector([0,0,-250]);
-    sol.setRotationSpeed([0,15,0]);
+    sol.setPositionVector([0,0,0]);
+    // sol.setRotationSpeed([0,15,0]);
 
+    mercury = planetFactory.create(30,30, 5, textureLoader.textures["mercury"]);
+    mercury.setOrbitParameters(0.0001, 150, 0, 0);
+    sol.addOribtal(mercury);
+
+    venus = planetFactory.create(30,30, 5, textureLoader.textures["venus"]);
+    venus.setOrbitParameters(0.0001, 250, 0, 0);
+    sol.addOribtal(venus);
+
+    //earth subsystem
     earth = planetFactory.create(30,30, 5, textureLoader.textures["earth"]);
-    earth.setOrbitParameters(0.001, 150, 0.1, 0);
+    earth.setOrbitParameters(0.0001, 350, 0, 0);
     earth.setRotationSpeed([0,25,0]);
     earth.setAxisTilt(-23);
+    sol.addOribtal(earth);
 
     moon = planetFactory.create(30,30, 1, textureLoader.textures["moon"]);
     moon.setOrbitParameters(0.01, 8, 0.5, 0);
     moon.setOrbitTilt(-5.145);
     moon.setRotationSpeed([0,35,0]);
-
     earth.addOribtal(moon);
-    sol.addOribtal(earth);
+
+    mars = planetFactory.create(30,30, 5, textureLoader.textures["mars"]);
+    mars.setOrbitParameters(0.0001, 450, 0, 0);
+    sol.addOribtal(mars);
+
+    jupiter = planetFactory.create(30,30, 10, textureLoader.textures["jupiter"]);
+    jupiter.setOrbitParameters(0.0001, 650, 0, 0);
+    sol.addOribtal(jupiter);
+
+    saturn = planetFactory.create(30,30, 10, textureLoader.textures["saturn"]);
+    saturn.setOrbitParameters(0.0001, 750, 0, 0);
+    sol.addOribtal(saturn);
+
+    uranus = planetFactory.create(30,30, 5, textureLoader.textures["uranus"]);
+    uranus.setOrbitParameters(0.0001, 850, 0, 0);
+    sol.addOribtal(uranus);
+
+    neptune = planetFactory.create(30,30, 5, textureLoader.textures["uranus"]);
+    neptune.setOrbitParameters(0.0001, 950, 0, 0);
+    sol.addOribtal(neptune);
 
     solarSystem.addDrawableObject(sol);
 
@@ -126,7 +154,7 @@ function drawScene()
     gl.uniform1i(shaderProgram.useLightingUniform, false);
 
     var aspectRatio = gl.canvas.clientWidth / gl.canvas.clientHeight;
-    mat4.perspective(perspectiveMatrix, 45, aspectRatio, 0.1, 1000.0);
+    mat4.perspective(perspectiveMatrix, 45, aspectRatio, 0.1, 3000.0);
     mat4.identity(mvMatrix);
 
     //lighting
