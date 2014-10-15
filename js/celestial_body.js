@@ -1,10 +1,70 @@
-function CelestialBody(latitudeBands, longitudeBands, radius, texture)
+function CelestialBodyFactory(){}
+
+CelestialBodyFactory.prototype.create = function(latitudeBands, longitudeBands, radius, texture)
 {
-    //long, lat and radius defining the sphere
     this.latitudeBands = latitudeBands;
     this.longitudeBands = longitudeBands;
     this.radius = radius;
+    this.texture = texture;
 
+    var newBody = new CelestialBody(this.texture);
+    return this.makeVertexData(newBody);
+}
+
+CelestialBodyFactory.prototype.makeVertexData = function(newBody)
+{
+    for(var latitudeNumber = 0; latitudeNumber <= this.latitudeBands; latitudeNumber++)
+    {
+        var theta = latitudeNumber * Math.PI / this.latitudeBands;
+        var sinTheta = Math.sin(theta);
+        var cosTheta = Math.cos(theta);
+
+        for(longitudeNumber = 0; longitudeNumber <= this.longitudeBands; longitudeNumber++)
+        {
+            var phi = longitudeNumber * 2 * Math.PI / this.longitudeBands;
+            var sinPhi = Math.sin(phi);
+            var cosPhi = Math.cos(phi);
+
+            var x = cosPhi * sinTheta;
+            var y = cosTheta;
+            var z = sinPhi * sinTheta;
+
+            var u = 1 - (longitudeNumber / this.longitudeBands);
+            var v = 1 - (latitudeNumber / this.latitudeBands);
+
+            newBody.normalData.push(x);
+            newBody.normalData.push(y);
+            newBody.normalData.push(z);
+
+            newBody.vertexPositionData.push(this.radius * x);
+            newBody.vertexPositionData.push(this.radius * y);
+            newBody.vertexPositionData.push(this.radius * z);
+
+            newBody.textureCoordinateData.push(u);
+            newBody.textureCoordinateData.push(v);
+        }
+    }
+
+    for (var latitudeNumber = 0; latitudeNumber < this.latitudeBands; latitudeNumber++)
+    {
+      for (var longitudeNumber = 0; longitudeNumber < this.longitudeBands; longitudeNumber++) {
+        var first = (latitudeNumber * (this.longitudeBands + 1)) + longitudeNumber;
+        var second = first + this.longitudeBands + 1;
+        newBody.indexData.push(first);
+        newBody.indexData.push(second);
+        newBody.indexData.push(first + 1);
+
+        newBody.indexData.push(second);
+        newBody.indexData.push(second + 1);
+        newBody.indexData.push(first + 1);
+      }
+    }
+
+    return newBody;
+}
+
+function CelestialBody(texture)
+{
     //texture object defining look of the body
     this.texture = texture;
 
@@ -32,8 +92,6 @@ function CelestialBody(latitudeBands, longitudeBands, radius, texture)
 
 CelestialBody.prototype.initBuffers = function()
 {
-    this.makeVertexData();
-
     this.vertexPositionBuffer = createArrayBuffer(this.vertexPositionData, 3);
     this.vertexTextureCoordinateBuffer = createArrayBuffer(this.textureCoordinateData, 2);
     this.vertexNormalBuffer = createArrayBuffer(this.normalData, 3);
@@ -90,7 +148,6 @@ CelestialBody.prototype.animate = function(delta)
     vec3.add(this.rotation, this.rotation, deltaRotation);
 
     this.orbit(delta);
-    // this.animateOrbitals(delta);
 }
 
 CelestialBody.prototype.orbit = function(delta)
@@ -137,54 +194,4 @@ CelestialBody.prototype.setPositionVector = function(position)
 CelestialBody.prototype.addOribtal = function(orbital)
 {
     this.orbitals.push(orbital);
-}
-
-CelestialBody.prototype.makeVertexData = function()
-{
-    for(var latitudeNumber = 0; latitudeNumber <= this.latitudeBands; latitudeNumber++)
-    {
-        var theta = latitudeNumber * Math.PI / this.latitudeBands;
-        var sinTheta = Math.sin(theta);
-        var cosTheta = Math.cos(theta);
-
-        for(longitudeNumber = 0; longitudeNumber <= this.longitudeBands; longitudeNumber++)
-        {
-            var phi = longitudeNumber * 2 * Math.PI / this.longitudeBands;
-            var sinPhi = Math.sin(phi);
-            var cosPhi = Math.cos(phi);
-
-            var x = cosPhi * sinTheta;
-            var y = cosTheta;
-            var z = sinPhi * sinTheta;
-
-            var u = 1 - (longitudeNumber / this.longitudeBands);
-            var v = 1 - (latitudeNumber / this.latitudeBands);
-
-            this.normalData.push(x);
-            this.normalData.push(y);
-            this.normalData.push(z);
-
-            this.vertexPositionData.push(this.radius * x);
-            this.vertexPositionData.push(this.radius * y);
-            this.vertexPositionData.push(this.radius * z);
-
-            this.textureCoordinateData.push(u);
-            this.textureCoordinateData.push(v);
-        }
-    }
-
-    for (var latitudeNumber = 0; latitudeNumber < this.latitudeBands; latitudeNumber++)
-    {
-      for (var longitudeNumber = 0; longitudeNumber < this.longitudeBands; longitudeNumber++) {
-        var first = (latitudeNumber * (this.longitudeBands + 1)) + longitudeNumber;
-        var second = first + this.longitudeBands + 1;
-        this.indexData.push(first);
-        this.indexData.push(second);
-        this.indexData.push(first + 1);
-
-        this.indexData.push(second);
-        this.indexData.push(second + 1);
-        this.indexData.push(first + 1);
-      }
-    }
 }
