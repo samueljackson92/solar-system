@@ -28,7 +28,7 @@ function webGlStart()
     perspectiveMatrix = mat4.create();
     mvMatrix = mat4.create();
 
-    sol = planetFactory.create(30,30,20, textureLoader.textures["sun"]);
+    sol = planetFactory.create(30,30,20, textureLoader.textures["sun"], true);
     sol.setPositionVector([0,0,0]);
     // sol.setRotationSpeed([0,15,0]);
 
@@ -75,7 +75,7 @@ function webGlStart()
     uranus.setOrbitTilt(-30);
     sol.addOribtal(uranus);
 
-    neptune = planetFactory.create(30,30, 5, textureLoader.textures["uranus"]);
+    neptune = planetFactory.create(30,30, 5, textureLoader.textures["neptune"]);
     neptune.setOrbitParameters(0.0008, 950, 0, 0);
     neptune.setOrbitTilt(-40);
     sol.addOribtal(neptune);
@@ -167,11 +167,11 @@ function drawScene()
     //lighting
     gl.uniform1i(shaderProgram.useLightingUniform, true);
     gl.uniform3f(shaderProgram.ambientColorUniform, 0.1, 0.1, 0.1);
-    gl.uniform3f(shaderProgram.pointLightingLocationUniform, 0, 0, -100);
+    gl.uniform3f(shaderProgram.pointLightingLocationUniform, 0, 0, 0);
     gl.uniform3f(shaderProgram.pointLightingColorUniform, 3.0, 3.0, 3.0);
 
     //camera corrections
-    camera.move(mvMatrix);
+    camera.move(perspectiveMatrix);
     solarSystem.drawScene(mvMatrix);
 }
 

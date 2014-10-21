@@ -1,7 +1,9 @@
 function CelestialBodyFactory(){}
 
-CelestialBodyFactory.prototype.create = function(latitudeBands, longitudeBands, radius, texture)
+CelestialBodyFactory.prototype.create = function(latitudeBands, longitudeBands, radius, texture, isLightSource)
 {
+    this.isLightSource = (isLightSource !== undefined && isLightSource !== false);
+
     this.latitudeBands = latitudeBands;
     this.longitudeBands = longitudeBands;
     this.radius = radius;
@@ -32,9 +34,13 @@ CelestialBodyFactory.prototype.makeVertexData = function(newBody)
             var u = 1 - (longitudeNumber / this.longitudeBands);
             var v = 1 - (latitudeNumber / this.latitudeBands);
 
-            newBody.normalData.push(x);
-            newBody.normalData.push(y);
-            newBody.normalData.push(z);
+            norm_x = (this.isLightSource) ? -x : x;
+            norm_y = (this.isLightSource) ? -y : y;
+            norm_z = (this.isLightSource) ? -z : z;
+
+            newBody.normalData.push(norm_x);
+            newBody.normalData.push(norm_y);
+            newBody.normalData.push(norm_z);
 
             newBody.vertexPositionData.push(this.radius * x);
             newBody.vertexPositionData.push(this.radius * y);
