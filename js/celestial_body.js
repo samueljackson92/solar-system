@@ -71,16 +71,8 @@ CelestialBodyFactory.prototype.makeVertexData = function(newBody)
 
 function CelestialBody(texture)
 {
-    //texture object defining look of the body
-    this.texture = texture;
+    Drawable.call(this, texture);
 
-    // data arrays for vertices, normals etc.
-    this.vertexPositionData = [];
-    this.normalData = [];
-    this.textureCoordinateData = [];
-    this.indexData = [];
-
-    this.positionVector = vec3.fromValues(0,0,0);
     this.rotation = vec3.fromValues(0,0,0);
     this.rotationSpeed = vec3.fromValues(0,0,0);
 
@@ -97,15 +89,7 @@ function CelestialBody(texture)
     this.orbitals = [];
 }
 
-CelestialBody.prototype.initBuffers = function()
-{
-    this.vertexPositionBuffer = createArrayBuffer(this.vertexPositionData, 3);
-    this.vertexTextureCoordinateBuffer = createArrayBuffer(this.textureCoordinateData, 2);
-    this.vertexNormalBuffer = createArrayBuffer(this.normalData, 3);
-    this.vertexIndexBuffer = createElementArrayBuffer(this.indexData, 1);
-}
-
-CelestialBody.prototype.drawBody = function(modelViewMatrix)
+CelestialBody.prototype.draw = function(modelViewMatrix)
 {
     //tilt subsystem about it's orbital axis
     if (this.orbitTilt != 0)
@@ -145,11 +129,6 @@ CelestialBody.prototype.drawBody = function(modelViewMatrix)
     gl.drawElements(gl.TRIANGLES, this.vertexIndexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
 }
 
-CelestialBody.prototype.getChildren = function()
-{
-    return this.orbitals;
-}
-
 CelestialBody.prototype.animate = function(delta)
 {
     var deltaRotation = vec3.create();
@@ -158,6 +137,16 @@ CelestialBody.prototype.animate = function(delta)
     vec3.add(this.rotation, this.rotation, deltaRotation);
 
     this.orbit(delta);
+}
+
+CelestialBody.prototype.addChild = function(orbital)
+{
+    this.orbitals.push(orbital);
+}
+
+CelestialBody.prototype.getChildren = function()
+{
+    return this.orbitals;
 }
 
 CelestialBody.prototype.orbit = function(delta)
@@ -201,12 +190,4 @@ CelestialBody.prototype.setOrbitRotationSpeed = function(rotationSpeedVector)
     this.orbitRotationSpeed = rotationSpeedVector;
 }
 
-CelestialBody.prototype.setPositionVector = function(position)
-{
-    this.positionVector = position;
-}
-
-CelestialBody.prototype.addOribtal = function(orbital)
-{
-    this.orbitals.push(orbital);
-}
+extend(Drawable, CelestialBody);

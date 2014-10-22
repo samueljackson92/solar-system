@@ -35,13 +35,18 @@ SceneGraph.prototype.drawObjects = function(drawList, modelViewMatrix)
     {
 
         this.push(modelViewMatrix);
-        drawList[i].drawBody(modelViewMatrix);
+        drawList[i].draw(modelViewMatrix);
 
         this.push(modelViewMatrix);
-        var children = drawList[i].getChildren();
-        this.drawObjects(children, modelViewMatrix);
-        modelViewMatrix = this.pop();
 
+        //check if the object defines any children
+        if(typeof drawList[i].getChildren == 'function')
+        {
+            var children = drawList[i].getChildren();
+            this.drawObjects(children, modelViewMatrix);
+        }
+
+        modelViewMatrix = this.pop();
         modelViewMatrix = this.pop();
     }
 }
