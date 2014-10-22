@@ -56,7 +56,7 @@ function webGlStart()
     //
     //earth subsystem
     earth = planetFactory.create(30,30, 5, textureLoader.textures["earth"]);
-    earth.setOrbitParameters(0.0003, 350, 0, 0);
+    earth.setOrbitParameters(0.0005, 250, 0, 0);
     earth.setRotationSpeed([0,25,0]);
     earth.setAxisTilt(-23);
     earth.setOrbitTilt(-10);
@@ -69,8 +69,8 @@ function webGlStart()
     earth.addOribtal(moon);
     //
     mars = planetFactory.create(30,30, 5, textureLoader.textures["mars"]);
-    mars.setOrbitParameters(0.0004, 450, 0, 0);
-    mars.setOrbitTilt(-15);
+    mars.setOrbitParameters(0.0005, 300, 0, 0);
+    mars.setOrbitTilt(-0);
     sol.addOribtal(mars);
     //
     // jupiter = planetFactory.create(30,30, 10, textureLoader.textures["jupiter"]);

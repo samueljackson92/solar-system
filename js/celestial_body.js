@@ -105,7 +105,7 @@ CelestialBody.prototype.initBuffers = function()
     this.vertexIndexBuffer = createElementArrayBuffer(this.indexData, 1);
 }
 
-CelestialBody.prototype.drawSubSystem = function(modelViewMatrix)
+CelestialBody.prototype.drawBody = function(modelViewMatrix)
 {
     //tilt subsystem about it's orbital axis
     if (this.orbitTilt != 0)
@@ -120,10 +120,7 @@ CelestialBody.prototype.drawSubSystem = function(modelViewMatrix)
 
     //move body to position in scene
     mat4.translate(modelViewMatrix, modelViewMatrix, this.positionVector);
-}
 
-CelestialBody.prototype.drawBody = function(modelViewMatrix)
-{
     if (this.axisTilt != 0)
     {
         mat4.rotate(modelViewMatrix, modelViewMatrix, degToRad(this.axisTilt), [0,0,1]);
@@ -134,6 +131,7 @@ CelestialBody.prototype.drawBody = function(modelViewMatrix)
     mat4.rotateY(modelViewMatrix, modelViewMatrix, this.rotation[1]);
     mat4.rotateZ(modelViewMatrix, modelViewMatrix, this.rotation[2]);
 
+    //texture
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, this.texture);
     gl.uniform1i(shaderProgram.samplerUniform, 0);
