@@ -12,6 +12,18 @@ var earth;
 var moon;
 var sol;
 
+// solar_system_parameters = {
+//     'mercury': {
+//         'radius': 1.7,
+//         'orbit_parameters': {
+//             'velocity': 0.00047,
+//             'radius': 2.081,
+//             'inclincation': 3.38,
+//             'eccentrcity': 0.205,
+//         }
+//     }
+// }
+
 function webGlStart()
 {
     var canvas = document.getElementById("canvas");
@@ -28,19 +40,20 @@ function webGlStart()
     perspectiveMatrix = mat4.create();
     mvMatrix = mat4.create();
 
-    sol = planetFactory.create(30,30,20, textureLoader.textures["sun"], true);
+    sol = planetFactory.create(60,60,50, textureLoader.textures["sun"], true);
     sol.setPositionVector([0,0,0]);
     // sol.setRotationSpeed([0,15,0]);
 
-    mercury = planetFactory.create(30,30, 5, textureLoader.textures["mercury"]);
-    mercury.setOrbitParameters(0.0001, 150, 0, 0);
-    sol.addOribtal(mercury);
+    // mercury = planetFactory.create(30,30, 1.7, textureLoader.textures["mercury"]);
+    // mercury.setOrbitParameters(0.00047, 2.081+500, 0.2, 0);
+    // mercury.setOrbitTilt(3.38);
+    // sol.addOribtal(mercury);
 
-    venus = planetFactory.create(30,30, 5, textureLoader.textures["venus"]);
-    venus.setOrbitParameters(0.0002, 250, 0, 0);
-    venus.setOrbitTilt(-5);
-    sol.addOribtal(venus);
-
+    // venus = planetFactory.create(30,30, 5, textureLoader.textures["venus"]);
+    // venus.setOrbitParameters(0.0002, 250, 0, 0);
+    // venus.setOrbitTilt(-5);
+    // sol.addOribtal(venus);
+    //
     //earth subsystem
     earth = planetFactory.create(30,30, 5, textureLoader.textures["earth"]);
     earth.setOrbitParameters(0.0003, 350, 0, 0);
@@ -48,37 +61,37 @@ function webGlStart()
     earth.setAxisTilt(-23);
     earth.setOrbitTilt(-10);
     sol.addOribtal(earth);
-
+    //
     moon = planetFactory.create(30,30, 1, textureLoader.textures["moon"]);
     moon.setOrbitParameters(0.01, 8, 0.5, 0);
     moon.setOrbitTilt(-5.145);
     moon.setRotationSpeed([0,35,0]);
     earth.addOribtal(moon);
-
+    //
     mars = planetFactory.create(30,30, 5, textureLoader.textures["mars"]);
     mars.setOrbitParameters(0.0004, 450, 0, 0);
     mars.setOrbitTilt(-15);
     sol.addOribtal(mars);
-
-    jupiter = planetFactory.create(30,30, 10, textureLoader.textures["jupiter"]);
-    jupiter.setOrbitParameters(0.0005, 650, 0, 0);
-    jupiter.setOrbitTilt(-20);
-    sol.addOribtal(jupiter);
-
-    saturn = planetFactory.create(30,30, 10, textureLoader.textures["saturn"]);
-    saturn.setOrbitParameters(0.0006, 750, 0, 0);
-    saturn.setOrbitTilt(-25);
-    sol.addOribtal(saturn);
-
-    uranus = planetFactory.create(30,30, 5, textureLoader.textures["uranus"]);
-    uranus.setOrbitParameters(0.0007, 850, 0, 0);
-    uranus.setOrbitTilt(-30);
-    sol.addOribtal(uranus);
-
-    neptune = planetFactory.create(30,30, 5, textureLoader.textures["neptune"]);
-    neptune.setOrbitParameters(0.0008, 950, 0, 0);
-    neptune.setOrbitTilt(-40);
-    sol.addOribtal(neptune);
+    //
+    // jupiter = planetFactory.create(30,30, 10, textureLoader.textures["jupiter"]);
+    // jupiter.setOrbitParameters(0.0005, 650, 0, 0);
+    // jupiter.setOrbitTilt(-20);
+    // sol.addOribtal(jupiter);
+    //
+    // saturn = planetFactory.create(30,30, 10, textureLoader.textures["saturn"]);
+    // saturn.setOrbitParameters(0.0006, 750, 0, 0);
+    // saturn.setOrbitTilt(-25);
+    // sol.addOribtal(saturn);
+    //
+    // uranus = planetFactory.create(30,30, 5, textureLoader.textures["uranus"]);
+    // uranus.setOrbitParameters(0.0007, 850, 0, 0);
+    // uranus.setOrbitTilt(-30);
+    // sol.addOribtal(uranus);
+    //
+    // neptune = planetFactory.create(30,30, 5, textureLoader.textures["neptune"]);
+    // neptune.setOrbitParameters(0.0008, 950, 0, 0);
+    // neptune.setOrbitTilt(-40);
+    // sol.addOribtal(neptune);
 
     solarSystem.addDrawableObject(sol);
 
