@@ -28,7 +28,6 @@ function setMatrixUniforms(modelViewMatrix)
 {
     gl.uniformMatrix4fv(shaderProgram.pMatrixUniform, false, perspectiveMatrix);
     gl.uniformMatrix4fv(shaderProgram.mvMatrixUniform, false, modelViewMatrix);
-    gl.uniform1i(shaderProgram.isFullyLit, this.fullyLit);
 
     var normalMatrix = mat3.create();
     mat3.normalFromMat4(normalMatrix, modelViewMatrix);

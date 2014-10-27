@@ -9,7 +9,7 @@ CelestialBodyFactory.prototype.create = function(latitudeBands, longitudeBands, 
     this.radius = radius;
     this.texture = texture;
 
-    var newBody = new CelestialBody(this.texture);
+    var newBody = new CelestialBody(this.texture, this.isLightSource);
     return this.makeVertexData(newBody);
 }
 
@@ -34,13 +34,13 @@ CelestialBodyFactory.prototype.makeVertexData = function(newBody)
             var u = 1 - (longitudeNumber / this.longitudeBands);
             var v = 1 - (latitudeNumber / this.latitudeBands);
 
-            norm_x = (this.isLightSource) ? -x : x;
-            norm_y = (this.isLightSource) ? -y : y;
-            norm_z = (this.isLightSource) ? -z : z;
+            // norm_x = (this.isLightSource) ? -x : x;
+            // norm_y = (this.isLightSource) ? -y : y;
+            // norm_z = (this.isLightSource) ? -z : z;
 
-            newBody.normalData.push(norm_x);
-            newBody.normalData.push(norm_y);
-            newBody.normalData.push(norm_z);
+            newBody.normalData.push(x);
+            newBody.normalData.push(y);
+            newBody.normalData.push(z);
 
             newBody.vertexPositionData.push(this.radius * x);
             newBody.vertexPositionData.push(this.radius * y);
@@ -69,9 +69,9 @@ CelestialBodyFactory.prototype.makeVertexData = function(newBody)
     return newBody;
 }
 
-function CelestialBody(texture)
+function CelestialBody(texture, isLightSource)
 {
-    Drawable.call(this, texture);
+    Drawable.call(this, texture, isLightSource);
 
     this.rotation = vec3.fromValues(0,0,0);
     this.rotationSpeed = vec3.fromValues(0,0,0);
@@ -128,6 +128,13 @@ CelestialBody.prototype.draw = function(modelViewMatrix)
     bindBufferToShader(this.vertexNormalBuffer, shaderProgram.vertexNormalAttribute);
 
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.vertexIndexBuffer);
+
+    gl.uniform1i(shaderProgram.noDirectionalLight, this.isLightSource);
+    if (this.isLightSource)
+    {
+        gl.uniform3f(shaderProgram.nonDirectionalAmbientLighting, 1.5, 1.5, 1.5);
+    }
+
     setMatrixUniforms(modelViewMatrix);
     gl.drawElements(gl.TRIANGLES, this.vertexIndexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
 }

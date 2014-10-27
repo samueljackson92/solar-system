@@ -12,20 +12,20 @@
             varying vec2 vTextureCoord;
             varying vec3 vTransformedNormal;
             varying vec4 vPosition;
-
-            uniform bool uUseLighting;
-            uniform bool uFullyLit;
             uniform vec3 uAmbientColor;
 
             uniform vec3 uPointLightingLocation;
             uniform vec3 uPointLightingColor;
 
+            uniform bool uNoDirectionalLight;
+            uniform vec3 uNonDirectionalAmbientLighting;
+
             uniform sampler2D uSampler;
 
             void main(void) {
                 vec3 lightWeighting;
-                if (uFullyLit) {
-                    lightWeighting = vec3(0.5, 0.5, 0.5);
+                if (uNoDirectionalLight) {
+                    lightWeighting = uNonDirectionalAmbientLighting;
                 } else {
                       vec3 lightDirection = normalize(uPointLightingLocation - vPosition.xyz);
 

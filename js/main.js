@@ -34,7 +34,6 @@ function webGlStart()
     camera = new Camera();
     textureLoader = new TextureLoader();
 
-
     perspectiveMatrix = mat4.create();
     mvMatrix = mat4.create();
 
@@ -59,17 +58,17 @@ function webGlStart()
     earth.setAxisTilt(-23);
     earth.setOrbitTilt(-5);
     sol.addChild(earth);
-    //
-    moon = planetFactory.create(30,30, 1, textureLoader.textures["moon"]);
-    moon.setOrbitParameters(0.01, 5, 0.5, 0);
-    moon.setOrbitTilt(-5);
-    // moon.setRotationSpeed([0,35,0]);
-    earth.addChild(moon);
-    //
-    mars = planetFactory.create(30,30, 5, textureLoader.textures["mars"]);
-    mars.setOrbitParameters(0.0005, 300, 0, 0);
-    mars.setOrbitTilt(-0);
-    sol.addChild(mars);
+    // //
+    // moon = planetFactory.create(30,30, 1, textureLoader.textures["moon"]);
+    // moon.setOrbitParameters(0.01, 5, 0.5, 0);
+    // moon.setOrbitTilt(-5);
+    // // moon.setRotationSpeed([0,35,0]);
+    // earth.addChild(moon);
+    // //
+    // mars = planetFactory.create(30,30, 5, textureLoader.textures["mars"]);
+    // mars.setOrbitParameters(0.0005, 300, 0, 0);
+    // mars.setOrbitTilt(-0);
+    // sol.addChild(mars);
     //
     // jupiter = planetFactory.create(30,30, 10, textureLoader.textures["jupiter"]);
     // jupiter.setOrbitParameters(0.0005, 650, 0, 0);
@@ -149,15 +148,23 @@ function initShaders()
     shaderProgram.textureCoordAttribute = gl.getAttribLocation(shaderProgram, 'aTextureCoord');
     gl.enableVertexAttribArray(shaderProgram.textureCoordAttribute);
 
+    //perspective, model-view, and normal matricies
     shaderProgram.pMatrixUniform = gl.getUniformLocation(shaderProgram, "uPMatrix");
     shaderProgram.mvMatrixUniform = gl.getUniformLocation(shaderProgram, "uMVMatrix");
     shaderProgram.nMatrixUniform = gl.getUniformLocation(shaderProgram, "uNMatrix");
+
+    //texture sampler
     shaderProgram.samplerUniform = gl.getUniformLocation(shaderProgram, "uSampler");
-    shaderProgram.useLightingUniform = gl.getUniformLocation(shaderProgram, "uUseLighting");
-    shaderProgram.isFullyLit = gl.getUniformLocation(shaderProgram, "uFullyLit");
+    //ambient colour background
     shaderProgram.ambientColorUniform = gl.getUniformLocation(shaderProgram, "uAmbientColor");
+
+    //parameters for point lighting
     shaderProgram.pointLightingLocationUniform = gl.getUniformLocation(shaderProgram, "uPointLightingLocation");
     shaderProgram.pointLightingColorUniform = gl.getUniformLocation(shaderProgram, "uPointLightingColor");
+
+    //parameters for turning off directional lighting on an object (e.g. the sun/skybox)
+    shaderProgram.noDirectionalLight = gl.getUniformLocation(shaderProgram, "uNoDirectionalLight");
+    shaderProgram.nonDirectionalAmbientLighting = gl.getUniformLocation(shaderProgram, "uNonDirectionalAmbientLighting");
 }
 
 function tick()

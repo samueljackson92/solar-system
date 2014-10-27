@@ -7,8 +7,9 @@ Objects that implement Drawable must declare:
     - addChild :: a function to add child drawables to this object.
 */
 
-function Drawable(texture)
+function Drawable(texture, isLightSource)
 {
+
     //texture object defining look of the body
     this.texture = texture;
 
@@ -18,8 +19,9 @@ function Drawable(texture)
     this.textureCoordinateData = [];
     this.indexData = [];
     this.fullyLit = false;
-
     this.positionVector = vec3.fromValues(0,0,0);
+    
+    this.isLightSource = (isLightSource !== undefined && isLightSource !== false);
 }
 
 Drawable.prototype.initBuffers = function()
