@@ -123,6 +123,13 @@ CelestialBody.prototype.draw = function(modelViewMatrix)
 
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.vertexIndexBuffer);
 
+    this.setLightingUniforms();
+    setMatrixUniforms(modelViewMatrix);
+    gl.drawElements(gl.TRIANGLES, this.vertexIndexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
+}
+
+CelestialBody.prototype.setLightingUniforms = function()
+{
     gl.uniform1i(shaderProgram.noDirectionalLight, false);
 
     if(this.isLightSource)
@@ -137,14 +144,6 @@ CelestialBody.prototype.draw = function(modelViewMatrix)
     }
 
     gl.uniform3f(shaderProgram.diffuseColorUniform, 1,1,1);
-    
-    // if (this.isLightSource)
-    // {
-    //     // gl.uniform3f(shaderProgram.nonDirectionalAmbientLighting, 1.5, 1.5, 1.5);
-    // }
-
-    setMatrixUniforms(modelViewMatrix);
-    gl.drawElements(gl.TRIANGLES, this.vertexIndexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
 }
 
 CelestialBody.prototype.animate = function(delta)
