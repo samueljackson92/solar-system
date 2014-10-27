@@ -33,40 +33,57 @@ SceneGraph.prototype.drawObjects = function(drawList, modelViewMatrix)
 {
     for (var i=0; i < drawList.length; i++)
     {
-
         this.push(modelViewMatrix);
-        drawList[i].draw(modelViewMatrix);
+        var currentDrawable = drawList[i];
 
-        this.push(modelViewMatrix);
-
-        //check if the object defines any children
-        if(typeof drawList[i].getChildren == 'function')
+        //check if this is a celestial body and needs further drawing operations
+        if(currentDrawable instanceof CelestialBody)
         {
-            var children = drawList[i].getChildren();
+            currentDrawable.subSystemTransforms(modelViewMatrix);
+
+            this.push(modelViewMatrix);
+            var children = currentDrawable.getChildren();
             this.drawObjects(children, modelViewMatrix);
+            modelViewMatrix = this.pop();
         }
 
-        modelViewMatrix = this.pop();
+        currentDrawable.draw(modelViewMatrix);
         modelViewMatrix = this.pop();
     }
 }
 
 SceneGraph.prototype.animateScene = function(delta)
 {
-    this.preorderTraversal(this.drawableObjects, CelestialBody.prototype.animate, [delta]);
+    this.doAnimate(this.drawableObjects, delta);
+}
+
+SceneGraph.prototype.doAnimate = function(drawList, delta)
+{
+    for (var i=0; i < drawList.length; i++)
+    {
+        drawList[i].animate(delta);
+        if(typeof drawList[i].getChildren === 'function')
+        {
+            var children = drawList[i].getChildren();
+            this.doAnimate(children, delta);
+        }
+    }
 }
 
 SceneGraph.prototype.initBuffers = function()
 {
-    this.preorderTraversal(this.drawableObjects, CelestialBody.prototype.initBuffers);
+    this.doInitBuffers(this.drawableObjects);
 }
 
-SceneGraph.prototype.preorderTraversal = function(drawList, func, arguments)
+SceneGraph.prototype.doInitBuffers = function(drawList)
 {
     for (var i=0; i < drawList.length; i++)
     {
-        func.apply(drawList[i], arguments);
-        var children = drawList[i].getChildren();
-        this.preorderTraversal(children, func, arguments);
+        drawList[i].initBuffers();
+        if(typeof drawList[i].getChildren === 'function')
+        {
+            var children = drawList[i].getChildren();
+            this.doInitBuffers(children);
+        }
     }
 }

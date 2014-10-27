@@ -8,10 +8,7 @@ var textureLoader;
 var perspectiveMatrix;
 var mvMatrix;
 
-var earth;
-var moon;
-var sol;
-
+var skyBox;
 // solar_system_parameters = {
 //     'mercury': {
 //         'radius': 1.7,
@@ -37,6 +34,7 @@ function webGlStart()
     camera = new Camera();
     textureLoader = new TextureLoader();
 
+
     perspectiveMatrix = mat4.create();
     mvMatrix = mat4.create();
 
@@ -56,16 +54,16 @@ function webGlStart()
     //
     //earth subsystem
     earth = planetFactory.create(30,30, 5, textureLoader.textures["earth"]);
-    earth.setOrbitParameters(0.0005, 250, 0, 0);
+    earth.setOrbitParameters(0.0001, 250, 0, 0);
     earth.setRotationSpeed([0,25,0]);
     earth.setAxisTilt(-23);
-    earth.setOrbitTilt(-10);
+    earth.setOrbitTilt(-5);
     sol.addChild(earth);
     //
     moon = planetFactory.create(30,30, 1, textureLoader.textures["moon"]);
-    moon.setOrbitParameters(0.01, 8, 0.5, 0);
-    moon.setOrbitTilt(-5.145);
-    moon.setRotationSpeed([0,35,0]);
+    moon.setOrbitParameters(0.01, 5, 0.5, 0);
+    moon.setOrbitTilt(-5);
+    // moon.setRotationSpeed([0,35,0]);
     earth.addChild(moon);
     //
     mars = planetFactory.create(30,30, 5, textureLoader.textures["mars"]);
@@ -94,6 +92,9 @@ function webGlStart()
     // sol.addChild(neptune);
 
     solarSystem.addDrawableObject(sol);
+
+    // skyBox = new SkyBox('img/stars_bk.jpg');
+    // solarSystem.addDrawableObject(skyBox);
 
     initShaders();
     initBuffers();
@@ -153,6 +154,7 @@ function initShaders()
     shaderProgram.nMatrixUniform = gl.getUniformLocation(shaderProgram, "uNMatrix");
     shaderProgram.samplerUniform = gl.getUniformLocation(shaderProgram, "uSampler");
     shaderProgram.useLightingUniform = gl.getUniformLocation(shaderProgram, "uUseLighting");
+    shaderProgram.isFullyLit = gl.getUniformLocation(shaderProgram, "uFullyLit");
     shaderProgram.ambientColorUniform = gl.getUniformLocation(shaderProgram, "uAmbientColor");
     shaderProgram.pointLightingLocationUniform = gl.getUniformLocation(shaderProgram, "uPointLightingLocation");
     shaderProgram.pointLightingColorUniform = gl.getUniformLocation(shaderProgram, "uPointLightingColor");
@@ -174,17 +176,17 @@ function drawScene()
     gl.uniform1i(shaderProgram.useLightingUniform, false);
 
     var aspectRatio = gl.canvas.clientWidth / gl.canvas.clientHeight;
-    mat4.perspective(perspectiveMatrix, 45, aspectRatio, 0.1, 3000.0);
+    mat4.perspective(perspectiveMatrix, 45, aspectRatio, 0.1, 5000.0);
     mat4.identity(mvMatrix);
-
     //lighting
     gl.uniform1i(shaderProgram.useLightingUniform, true);
     gl.uniform3f(shaderProgram.ambientColorUniform, 0.1, 0.1, 0.1);
     gl.uniform3f(shaderProgram.pointLightingLocationUniform, 0, 0, 0);
     gl.uniform3f(shaderProgram.pointLightingColorUniform, 3.0, 3.0, 3.0);
 
-    //camera corrections
     camera.move(perspectiveMatrix);
+    //skybox should always be central to the camera.
+    // skyBox.setPositionVector(camera.getCameraPosition());
     solarSystem.drawScene(mvMatrix);
 }
 

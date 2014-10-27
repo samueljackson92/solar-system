@@ -17,6 +17,7 @@ function Drawable(texture)
     this.normalData = [];
     this.textureCoordinateData = [];
     this.indexData = [];
+    this.fullyLit = false;
 
     this.positionVector = vec3.fromValues(0,0,0);
 }

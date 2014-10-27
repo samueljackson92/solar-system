@@ -4,6 +4,8 @@ function Camera()
     this.yPos = 0;
     this.zPos = 250;
 
+    this.position = vec3.fromValues(0,0,0);
+
     this.speed = 0;
     this.theta = 0;
     this.phi = 0;
@@ -21,6 +23,7 @@ function Camera()
     this.A_KEY = 65;
     this.D_KEY = 68;
 }
+
 
 
 Camera.prototype.handleCameraKeys = function handleKeys() {
@@ -70,10 +73,16 @@ Camera.prototype.update = function(delta)
     }
 }
 
-Camera.prototype.move = function(modelViewMatrix)
+Camera.prototype.move = function(perspectiveMatrix)
 {
-    mat4.rotate(modelViewMatrix, modelViewMatrix, degToRad(-this.yaw), [0, 1, 0]);
-    mat4.translate(modelViewMatrix, modelViewMatrix, [-this.xPos, -this.yPos, -this.zPos]);
-    mat4.rotate(modelViewMatrix, modelViewMatrix, degToRad(this.theta), [0, 1, 0]);
-    mat4.rotate(modelViewMatrix, modelViewMatrix, degToRad(this.phi), [0, 0, 1]);
+    this.position = vec3.fromValues(-this.xPos, -this.yPos, -this.zPos);
+    mat4.rotate(perspectiveMatrix, perspectiveMatrix, degToRad(-this.yaw), [0, 1, 0]);
+    mat4.translate(perspectiveMatrix, perspectiveMatrix, this.position);
+    mat4.rotate(perspectiveMatrix, perspectiveMatrix, degToRad(this.theta), [0, 1, 0]);
+    mat4.rotate(perspectiveMatrix, perspectiveMatrix, degToRad(this.phi), [0, 0, 1]);
+}
+
+Camera.prototype.getCameraPosition = function()
+{
+    return this.position;
 }

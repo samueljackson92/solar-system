@@ -14,6 +14,7 @@ function TextureLoader()
         "sun": "sunmap.jpg",
         "uranus": "uranusmap.jpg",
         "venus": "venusmap.jpg",
+        // "skybox": "stars_bk.jpg",
     };
 
     this.textures = {};
