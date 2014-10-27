@@ -52,7 +52,7 @@ function webGlStart()
     // sol.addChild(venus);
     //
     //earth subsystem
-    earth = planetFactory.create(30,30, 5, textureLoader.textures["earth"]);
+    earth = planetFactory.create(30,30, 5, textureLoader.textures["earth"], false);
     earth.setOrbitParameters(0.0001, 250, 0, 0);
     earth.setRotationSpeed([0,25,0]);
     earth.setAxisTilt(-23);
@@ -155,8 +155,11 @@ function initShaders()
 
     //texture sampler
     shaderProgram.samplerUniform = gl.getUniformLocation(shaderProgram, "uSampler");
-    //ambient colour background
+
+    //general lighting parameters
     shaderProgram.ambientColorUniform = gl.getUniformLocation(shaderProgram, "uAmbientColor");
+    shaderProgram.diffuseColorUniform = gl.getUniformLocation(shaderProgram, "uDiffuseColor");
+    shaderProgram.emissiveColorUniform = gl.getUniformLocation(shaderProgram, "uEmissiveColor");
 
     //parameters for point lighting
     shaderProgram.pointLightingLocationUniform = gl.getUniformLocation(shaderProgram, "uPointLightingLocation");

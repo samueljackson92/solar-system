@@ -12,7 +12,11 @@
             varying vec2 vTextureCoord;
             varying vec3 vTransformedNormal;
             varying vec4 vPosition;
+
+            //lighting uniforms
             uniform vec3 uAmbientColor;
+            uniform vec3 uEmissiveColor;
+            uniform vec3 uDiffuseColor;
 
             uniform vec3 uPointLightingLocation;
             uniform vec3 uPointLightingColor;
@@ -24,13 +28,13 @@
 
             void main(void) {
                 vec3 lightWeighting;
+
                 if (uNoDirectionalLight) {
                     lightWeighting = uNonDirectionalAmbientLighting;
                 } else {
                       vec3 lightDirection = normalize(uPointLightingLocation - vPosition.xyz);
-
-                      float directionalLightWeighting = max(dot(normalize(vTransformedNormal), lightDirection), 0.0);
-                      lightWeighting = uAmbientColor + uPointLightingColor * directionalLightWeighting;
+                      float diffuse = max(dot(normalize(vTransformedNormal), lightDirection), 0.0);
+                      lightWeighting = uEmissiveColor + uPointLightingColor * (uAmbientColor + uDiffuseColor * diffuse);
                 }
 
                 vec4 fragmentColor = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t));

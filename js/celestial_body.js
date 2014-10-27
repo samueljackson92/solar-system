@@ -2,14 +2,12 @@ function CelestialBodyFactory(){}
 
 CelestialBodyFactory.prototype.create = function(latitudeBands, longitudeBands, radius, texture, isLightSource)
 {
-    this.isLightSource = (isLightSource !== undefined && isLightSource !== false);
-
     this.latitudeBands = latitudeBands;
     this.longitudeBands = longitudeBands;
     this.radius = radius;
     this.texture = texture;
 
-    var newBody = new CelestialBody(this.texture, this.isLightSource);
+    var newBody = new CelestialBody(this.texture, isLightSource);
     return this.makeVertexData(newBody);
 }
 
@@ -33,10 +31,6 @@ CelestialBodyFactory.prototype.makeVertexData = function(newBody)
 
             var u = 1 - (longitudeNumber / this.longitudeBands);
             var v = 1 - (latitudeNumber / this.latitudeBands);
-
-            // norm_x = (this.isLightSource) ? -x : x;
-            // norm_y = (this.isLightSource) ? -y : y;
-            // norm_z = (this.isLightSource) ? -z : z;
 
             newBody.normalData.push(x);
             newBody.normalData.push(y);
@@ -129,11 +123,25 @@ CelestialBody.prototype.draw = function(modelViewMatrix)
 
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.vertexIndexBuffer);
 
-    gl.uniform1i(shaderProgram.noDirectionalLight, this.isLightSource);
-    if (this.isLightSource)
+    gl.uniform1i(shaderProgram.noDirectionalLight, false);
+
+    if(this.isLightSource)
     {
-        gl.uniform3f(shaderProgram.nonDirectionalAmbientLighting, 1.5, 1.5, 1.5);
+        gl.uniform3f(shaderProgram.emissiveColorUniform, 1.0, 1.0, 1.0);
+        gl.uniform3f(shaderProgram.ambientColorUniform, 1,1,1);
     }
+    else
+    {
+        gl.uniform3f(shaderProgram.emissiveColorUniform, 0,0,0);
+        gl.uniform3f(shaderProgram.ambientColorUniform, 0,0,0);
+    }
+
+    gl.uniform3f(shaderProgram.diffuseColorUniform, 1,1,1);
+    
+    // if (this.isLightSource)
+    // {
+    //     // gl.uniform3f(shaderProgram.nonDirectionalAmbientLighting, 1.5, 1.5, 1.5);
+    // }
 
     setMatrixUniforms(modelViewMatrix);
     gl.drawElements(gl.TRIANGLES, this.vertexIndexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
