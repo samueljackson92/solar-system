@@ -134,6 +134,8 @@ CelestialBody.prototype.setLightingUniforms = function()
 
     if(this.isLightSource)
     {
+        gl.uniform3fv(shaderProgram.pointLightingLocationUniform, this.positionVector);
+        gl.uniform3f(shaderProgram.pointLightingColorUniform, 1.0, 1.0, 1.0);
         gl.uniform3f(shaderProgram.emissiveColorUniform, 1.0, 1.0, 1.0);
         gl.uniform3f(shaderProgram.ambientColorUniform, 1,1,1);
     }
@@ -144,7 +146,7 @@ CelestialBody.prototype.setLightingUniforms = function()
     }
 
     gl.uniform1f(shaderProgram.materialShininess, 3.0);
-    
+
     //light attentuation factors
     gl.uniform1f(shaderProgram.constantLightAttenuation, 0.0001);
     gl.uniform1f(shaderProgram.linearLightAttenuation, 0.0001);

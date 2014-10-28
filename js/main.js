@@ -193,11 +193,8 @@ function drawScene()
     var aspectRatio = gl.canvas.clientWidth / gl.canvas.clientHeight;
     mat4.perspective(perspectiveMatrix, 45, aspectRatio, 0.1, 5000.0);
     mat4.identity(mvMatrix);
-    //lighting
+    
     gl.uniform1i(shaderProgram.useLightingUniform, true);
-    gl.uniform3f(shaderProgram.ambientColorUniform, 1.0, 1.0, 1.0);
-    gl.uniform3f(shaderProgram.pointLightingLocationUniform, 0, 0, 0);
-    gl.uniform3f(shaderProgram.pointLightingColorUniform, 1.0, 1.0, 1.0);
 
     camera.move(perspectiveMatrix);
     //skybox should always be central to the camera.
