@@ -5,6 +5,42 @@
         <!-- End of CSS imports -->
 
         <!-- WebGl shader imports -->
+        <script id="basic-fs" type="x-shader/x-fragment">
+            precision mediump float;
+
+            varying vec2 vTextureCoord;
+            varying vec3 vTransformedNormal;
+            varying vec4 vPosition;
+
+            uniform vec3 uAmbientColor;
+            uniform sampler2D uSampler;
+
+            void main(void) {
+                vec4 fragmentColor = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t));
+                gl_FragColor = vec4(fragmentColor.rgb * uAmbientColor, fragmentColor.a);
+            }
+        </script>
+        <script id="basic-vs" type="x-shader/x-vertex">
+            attribute vec3 aVertexPosition;
+            attribute vec3 aVertexNormal;
+            attribute vec2 aTextureCoord;
+
+            uniform mat4 uMVMatrix;
+            uniform mat4 uPMatrix;
+            uniform mat3 uNMatrix;
+
+            varying vec2 vTextureCoord;
+            varying vec3 vTransformedNormal;
+            varying vec4 vPosition;
+
+            void main(void) {
+                vPosition = uMVMatrix * vec4(aVertexPosition, 1.0);
+                gl_Position = uPMatrix * vPosition;
+                vTextureCoord = aTextureCoord;
+                vTransformedNormal = uNMatrix * aVertexNormal;
+            }
+        </script>
+
         <!-- fragment shader -->
         <script id="shader-fs" type="x-shader/x-fragment">
             precision mediump float;
