@@ -18,6 +18,10 @@
             uniform vec3 uEmissiveColor;
             uniform vec3 uDiffuseColor;
 
+            uniform float uConstantLightAttenuation;
+            uniform float uLinearLightAttenuation;
+            uniform float uQuadraticLightAttenuation;
+
             uniform vec3 uPointLightingLocation;
             uniform vec3 uPointLightingColor;
 
@@ -26,17 +30,25 @@
 
             uniform sampler2D uSampler;
 
+            //calculate light attenuation from a light source
+            float calculateLightAttentuation(float r)
+            {
+                return min(1.0 / (uConstantLightAttenuation + uLinearLightAttenuation * r + uQuadraticLightAttenuation * r*r), 1.0);
+            }
+
             void main(void) {
                 vec3 lightWeighting;
 
                 if (uNoDirectionalLight) {
                     lightWeighting = uNonDirectionalAmbientLighting;
                 } else {
-                      vec3 lightDirection = normalize(uPointLightingLocation - vPosition.xyz);
-                      float diffuse = max(dot(normalize(vTransformedNormal), lightDirection), 0.0);
-                      lightWeighting = uEmissiveColor + uPointLightingColor * (uAmbientColor + uDiffuseColor * diffuse);
-                }
+                    vec3 lightDirection = uPointLightingLocation - vPosition.xyz;
+                    vec3 lightNormal = normalize(lightDirection);
 
+                    float lightAttenuation = calculateLightAttentuation(length(lightDirection));
+                    float diffuse = max(dot(normalize(vTransformedNormal), lightNormal), 0.0);
+                    lightWeighting = uEmissiveColor + lightAttenuation * uPointLightingColor * (uAmbientColor + uDiffuseColor * diffuse);
+                }
                 vec4 fragmentColor = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t));
                 gl_FragColor = vec4(fragmentColor.rgb * lightWeighting, fragmentColor.a);
             }

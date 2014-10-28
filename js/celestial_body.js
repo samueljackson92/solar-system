@@ -143,7 +143,12 @@ CelestialBody.prototype.setLightingUniforms = function()
         gl.uniform3f(shaderProgram.ambientColorUniform, 0,0,0);
     }
 
-    gl.uniform3f(shaderProgram.diffuseColorUniform, 1,1,1);
+    gl.uniform3f(shaderProgram.diffuseColorUniform, 0.7,0.7,0.7);
+
+    //light attentuation factors
+    gl.uniform1f(shaderProgram.constantLightAttenuation, 0.0001);
+    gl.uniform1f(shaderProgram.linearLightAttenuation, 0.0001);
+    gl.uniform1f(shaderProgram.quadraticLightAttenuation, 0.00001);
 }
 
 CelestialBody.prototype.animate = function(delta)

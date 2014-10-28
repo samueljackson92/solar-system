@@ -41,54 +41,54 @@ function webGlStart()
     sol.setPositionVector([0,0,0]);
     // sol.setRotationSpeed([0,15,0]);
 
-    // mercury = planetFactory.create(30,30, 1.7, textureLoader.textures["mercury"]);
-    // mercury.setOrbitParameters(0.00047, 2.081+500, 0.2, 0);
+    mercury = planetFactory.create(30,30, 1.7, textureLoader.textures["mercury"]);
+    mercury.setOrbitParameters(0.000, 100, 0.2, 0);
     // mercury.setOrbitTilt(3.38);
-    // sol.addChild(mercury);
+    sol.addChild(mercury);
 
-    // venus = planetFactory.create(30,30, 5, textureLoader.textures["venus"]);
-    // venus.setOrbitParameters(0.0002, 250, 0, 0);
+    venus = planetFactory.create(30,30, 5, textureLoader.textures["venus"]);
+    venus.setOrbitParameters(0.000, 150, 0, 0);
     // venus.setOrbitTilt(-5);
-    // sol.addChild(venus);
+    sol.addChild(venus);
     //
     //earth subsystem
     earth = planetFactory.create(30,30, 5, textureLoader.textures["earth"], false);
-    earth.setOrbitParameters(0.0001, 250, 0, 0);
+    earth.setOrbitParameters(0.000, 250, 0, 0);
     earth.setRotationSpeed([0,25,0]);
-    earth.setAxisTilt(-23);
-    earth.setOrbitTilt(-5);
+    // earth.setAxisTilt(-23);
+    // earth.setOrbitTilt(-5);
     sol.addChild(earth);
     // //
-    // moon = planetFactory.create(30,30, 1, textureLoader.textures["moon"]);
-    // moon.setOrbitParameters(0.01, 5, 0.5, 0);
-    // moon.setOrbitTilt(-5);
-    // // moon.setRotationSpeed([0,35,0]);
-    // earth.addChild(moon);
+    moon = planetFactory.create(30,30, 1, textureLoader.textures["moon"]);
+    moon.setOrbitParameters(0.01, 5, 0.5, 0);
+    moon.setOrbitTilt(-45);
+    // moon.setRotationSpeed([0,35,0]);
+    earth.addChild(moon);
     // //
-    // mars = planetFactory.create(30,30, 5, textureLoader.textures["mars"]);
-    // mars.setOrbitParameters(0.0005, 300, 0, 0);
+    mars = planetFactory.create(30,30, 5, textureLoader.textures["mars"]);
+    mars.setOrbitParameters(0.000, 350, 0, 0);
     // mars.setOrbitTilt(-0);
-    // sol.addChild(mars);
+    sol.addChild(mars);
     //
-    // jupiter = planetFactory.create(30,30, 10, textureLoader.textures["jupiter"]);
-    // jupiter.setOrbitParameters(0.0005, 650, 0, 0);
+    jupiter = planetFactory.create(30,30, 10, textureLoader.textures["jupiter"]);
+    jupiter.setOrbitParameters(0.000, 650, 0, 0);
     // jupiter.setOrbitTilt(-20);
-    // sol.addChild(jupiter);
+    sol.addChild(jupiter);
     //
-    // saturn = planetFactory.create(30,30, 10, textureLoader.textures["saturn"]);
-    // saturn.setOrbitParameters(0.0006, 750, 0, 0);
+    saturn = planetFactory.create(30,30, 10, textureLoader.textures["saturn"]);
+    saturn.setOrbitParameters(0.000, 750, 0, 0);
     // saturn.setOrbitTilt(-25);
-    // sol.addChild(saturn);
+    sol.addChild(saturn);
     //
-    // uranus = planetFactory.create(30,30, 5, textureLoader.textures["uranus"]);
-    // uranus.setOrbitParameters(0.0007, 850, 0, 0);
+    uranus = planetFactory.create(30,30, 5, textureLoader.textures["uranus"]);
+    uranus.setOrbitParameters(0.000, 850, 0, 0);
     // uranus.setOrbitTilt(-30);
-    // sol.addChild(uranus);
+    sol.addChild(uranus);
     //
-    // neptune = planetFactory.create(30,30, 5, textureLoader.textures["neptune"]);
-    // neptune.setOrbitParameters(0.0008, 950, 0, 0);
+    neptune = planetFactory.create(30,30, 5, textureLoader.textures["neptune"]);
+    neptune.setOrbitParameters(0.000, 950, 0, 0);
     // neptune.setOrbitTilt(-40);
-    // sol.addChild(neptune);
+    sol.addChild(neptune);
 
     solarSystem.addDrawableObject(sol);
 
@@ -160,6 +160,11 @@ function initShaders()
     shaderProgram.ambientColorUniform = gl.getUniformLocation(shaderProgram, "uAmbientColor");
     shaderProgram.diffuseColorUniform = gl.getUniformLocation(shaderProgram, "uDiffuseColor");
     shaderProgram.emissiveColorUniform = gl.getUniformLocation(shaderProgram, "uEmissiveColor");
+
+    //light attenuation parameters
+    shaderProgram.constantLightAttenuation = gl.getUniformLocation(shaderProgram, "uConstantLightAttenuation");
+    shaderProgram.linearLightAttenuation = gl.getUniformLocation(shaderProgram, "uLinearLightAttenuation");
+    shaderProgram.quadraticLightAttenuation = gl.getUniformLocation(shaderProgram, "uQuadraticLightAttenuation");
 
     //parameters for point lighting
     shaderProgram.pointLightingLocationUniform = gl.getUniformLocation(shaderProgram, "uPointLightingLocation");
