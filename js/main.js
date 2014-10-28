@@ -158,8 +158,8 @@ function initShaders()
 
     //general lighting parameters
     shaderProgram.ambientColorUniform = gl.getUniformLocation(shaderProgram, "uAmbientColor");
-    shaderProgram.diffuseColorUniform = gl.getUniformLocation(shaderProgram, "uDiffuseColor");
     shaderProgram.emissiveColorUniform = gl.getUniformLocation(shaderProgram, "uEmissiveColor");
+    shaderProgram.materialShininess = gl.getUniformLocation(shaderProgram, "uMaterialShininess");
 
     //light attenuation parameters
     shaderProgram.constantLightAttenuation = gl.getUniformLocation(shaderProgram, "uConstantLightAttenuation");
@@ -195,9 +195,9 @@ function drawScene()
     mat4.identity(mvMatrix);
     //lighting
     gl.uniform1i(shaderProgram.useLightingUniform, true);
-    gl.uniform3f(shaderProgram.ambientColorUniform, 0.1, 0.1, 0.1);
+    gl.uniform3f(shaderProgram.ambientColorUniform, 1.0, 1.0, 1.0);
     gl.uniform3f(shaderProgram.pointLightingLocationUniform, 0, 0, 0);
-    gl.uniform3f(shaderProgram.pointLightingColorUniform, 3.0, 3.0, 3.0);
+    gl.uniform3f(shaderProgram.pointLightingColorUniform, 1.0, 1.0, 1.0);
 
     camera.move(perspectiveMatrix);
     //skybox should always be central to the camera.

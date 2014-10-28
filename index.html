@@ -16,7 +16,6 @@
             //lighting uniforms
             uniform vec3 uAmbientColor;
             uniform vec3 uEmissiveColor;
-            uniform vec3 uDiffuseColor;
 
             uniform float uConstantLightAttenuation;
             uniform float uLinearLightAttenuation;
@@ -24,6 +23,8 @@
 
             uniform vec3 uPointLightingLocation;
             uniform vec3 uPointLightingColor;
+
+            uniform float uMaterialShininess;
 
             uniform bool uNoDirectionalLight;
             uniform vec3 uNonDirectionalAmbientLighting;
@@ -33,7 +34,7 @@
             //calculate light attenuation from a light source
             float calculateLightAttentuation(float r)
             {
-                return min(1.0 / (uConstantLightAttenuation + uLinearLightAttenuation * r + uQuadraticLightAttenuation * r*r), 1.0);
+                return min(1.0 / (uConstantLightAttenuation + uLinearLightAttenuation * r + uQuadraticLightAttenuation * r*r), uMaterialShininess);
             }
 
             void main(void) {
@@ -42,12 +43,19 @@
                 if (uNoDirectionalLight) {
                     lightWeighting = uNonDirectionalAmbientLighting;
                 } else {
+                    vec3 normal = normalize(vTransformedNormal);
+                    vec3 eyeDirection = normalize(-vPosition.xyz);
                     vec3 lightDirection = uPointLightingLocation - vPosition.xyz;
                     vec3 lightNormal = normalize(lightDirection);
+                    vec3 reflectionDirection = reflect(-lightNormal, normal);
 
                     float lightAttenuation = calculateLightAttentuation(length(lightDirection));
-                    float diffuse = max(dot(normalize(vTransformedNormal), lightNormal), 0.0);
-                    lightWeighting = uEmissiveColor + lightAttenuation * uPointLightingColor * (uAmbientColor + uDiffuseColor * diffuse);
+                    float diffuseLightWeighting = max(dot(normal, lightNormal), 0.0);
+                    float specularLightWeighting = pow(max(dot(reflectionDirection, eyeDirection), 0.0), uMaterialShininess);
+                    //correction for the loss of angle information during reflection of the normal
+                    specularLightWeighting *= diffuseLightWeighting;
+
+                    lightWeighting = uEmissiveColor + lightAttenuation * uPointLightingColor * (uAmbientColor + specularLightWeighting + diffuseLightWeighting);
                 }
                 vec4 fragmentColor = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t));
                 gl_FragColor = vec4(fragmentColor.rgb * lightWeighting, fragmentColor.a);
