@@ -83,6 +83,49 @@ function CelestialBody(texture, isLightSource)
     this.orbitals = [];
 }
 
+CelestialBody.prototype.initShaders = function(shaderProgram)
+{
+    this.shaderProgram = shaderProgram;
+    gl.useProgram(this.shaderProgram);
+
+    this.shaderProgram.vertexPositionAttribute = gl.getAttribLocation(this.shaderProgram, 'aVertexPosition');
+    gl.enableVertexAttribArray(this.shaderProgram.vertexPositionAttribute);
+
+    this.shaderProgram.vertexNormalAttribute = gl.getAttribLocation(this.shaderProgram, 'aVertexNormal');
+    gl.enableVertexAttribArray(this.shaderProgram.vertexNormalAttribute);
+
+    this.shaderProgram.textureCoordAttribute = gl.getAttribLocation(this.shaderProgram, 'aTextureCoord');
+    gl.enableVertexAttribArray(this.shaderProgram.textureCoordAttribute);
+
+    //perspective, model-view, and normal matricies
+    this.shaderProgram.pMatrixUniform = gl.getUniformLocation(this.shaderProgram, "uPMatrix");
+    this.shaderProgram.mvMatrixUniform = gl.getUniformLocation(this.shaderProgram, "uMVMatrix");
+    this.shaderProgram.nMatrixUniform = gl.getUniformLocation(this.shaderProgram, "uNMatrix");
+
+    //texture sampler
+    this.shaderProgram.samplerUniform = gl.getUniformLocation(this.shaderProgram, "uSampler");
+
+    //general lighting parameters
+    this.shaderProgram.ambientColorUniform = gl.getUniformLocation(this.shaderProgram, "uAmbientColor");
+    this.shaderProgram.emissiveColorUniform = gl.getUniformLocation(this.shaderProgram, "uEmissiveColor");
+    this.shaderProgram.materialShininess = gl.getUniformLocation(this.shaderProgram, "uMaterialShininess");
+
+    //light attenuation parameters
+    this.shaderProgram.constantLightAttenuation = gl.getUniformLocation(this.shaderProgram, "uConstantLightAttenuation");
+    this.shaderProgram.linearLightAttenuation = gl.getUniformLocation(this.shaderProgram, "uLinearLightAttenuation");
+    this.shaderProgram.quadraticLightAttenuation = gl.getUniformLocation(this.shaderProgram, "uQuadraticLightAttenuation");
+
+    //parameters for point lighting
+    this.shaderProgram.pointLightingLocationUniform = gl.getUniformLocation(this.shaderProgram, "uPointLightingLocation");
+    this.shaderProgram.pointLightingColorUniform = gl.getUniformLocation(this.shaderProgram, "uPointLightingColor");
+
+    //parameters for turning off directional lighting on an object (e.g. the sun/skybox)
+    this.shaderProgram.noDirectionalLight = gl.getUniformLocation(this.shaderProgram, "uNoDirectionalLight");
+    this.shaderProgram.nonDirectionalAmbientLighting = gl.getUniformLocation(this.shaderProgram, "uNonDirectionalAmbientLighting");
+
+    gl.uniform1i(this.shaderProgram.useLightingUniform, true);
+}
+
 CelestialBody.prototype.subSystemTransforms = function(modelViewMatrix)
 {
     // tilt subsystem about it's orbital axis
@@ -102,6 +145,8 @@ CelestialBody.prototype.subSystemTransforms = function(modelViewMatrix)
 
 CelestialBody.prototype.draw = function(modelViewMatrix)
 {
+    gl.useProgram(this.shaderProgram);
+
     if (this.axisTilt != 0)
     {
         mat4.rotate(modelViewMatrix, modelViewMatrix, degToRad(this.axisTilt), [0,0,1]);
@@ -115,42 +160,42 @@ CelestialBody.prototype.draw = function(modelViewMatrix)
     //texture
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, this.texture);
-    gl.uniform1i(shaderProgram.samplerUniform, 0);
+    gl.uniform1i(this.shaderProgram.samplerUniform, 0);
 
-    bindBufferToShader(this.vertexPositionBuffer, shaderProgram.vertexPositionAttribute);
-    bindBufferToShader(this.vertexTextureCoordinateBuffer, shaderProgram.textureCoordAttribute);
-    bindBufferToShader(this.vertexNormalBuffer, shaderProgram.vertexNormalAttribute);
+    bindBufferToShader(this.vertexPositionBuffer, this.shaderProgram.vertexPositionAttribute);
+    bindBufferToShader(this.vertexTextureCoordinateBuffer, this.shaderProgram.textureCoordAttribute);
+    bindBufferToShader(this.vertexNormalBuffer, this.shaderProgram.vertexNormalAttribute);
 
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.vertexIndexBuffer);
 
     this.setLightingUniforms();
-    setMatrixUniforms(modelViewMatrix);
+    setMatrixUniforms(this.shaderProgram, modelViewMatrix);
     gl.drawElements(gl.TRIANGLES, this.vertexIndexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
 }
 
 CelestialBody.prototype.setLightingUniforms = function()
 {
-    gl.uniform1i(shaderProgram.noDirectionalLight, false);
+    gl.uniform1i(this.shaderProgram.noDirectionalLight, false);
 
     if(this.isLightSource)
     {
-        gl.uniform3fv(shaderProgram.pointLightingLocationUniform, this.positionVector);
-        gl.uniform3f(shaderProgram.pointLightingColorUniform, 1.0, 1.0, 1.0);
-        gl.uniform3f(shaderProgram.emissiveColorUniform, 1.0, 1.0, 1.0);
-        gl.uniform3f(shaderProgram.ambientColorUniform, 1,1,1);
+        gl.uniform3fv(this.shaderProgram.pointLightingLocationUniform, this.positionVector);
+        gl.uniform3f(this.shaderProgram.pointLightingColorUniform, 1.0, 1.0, 1.0);
+        gl.uniform3f(this.shaderProgram.emissiveColorUniform, 1.0, 1.0, 1.0);
+        gl.uniform3f(this.shaderProgram.ambientColorUniform, 1,1,1);
     }
     else
     {
-        gl.uniform3f(shaderProgram.emissiveColorUniform, 0,0,0);
-        gl.uniform3f(shaderProgram.ambientColorUniform, 0.2,0.2,0.2);
+        gl.uniform3f(this.shaderProgram.emissiveColorUniform, 0,0,0);
+        gl.uniform3f(this.shaderProgram.ambientColorUniform, 0.2,0.2,0.2);
     }
 
-    gl.uniform1f(shaderProgram.materialShininess, 3.0);
+    gl.uniform1f(this.shaderProgram.materialShininess, 3.0);
 
     //light attentuation factors
-    gl.uniform1f(shaderProgram.constantLightAttenuation, 0.0001);
-    gl.uniform1f(shaderProgram.linearLightAttenuation, 0.0001);
-    gl.uniform1f(shaderProgram.quadraticLightAttenuation, 0.00001);
+    gl.uniform1f(this.shaderProgram.constantLightAttenuation, 0.0001);
+    gl.uniform1f(this.shaderProgram.linearLightAttenuation, 0.0001);
+    gl.uniform1f(this.shaderProgram.quadraticLightAttenuation, 0.00001);
 }
 
 CelestialBody.prototype.animate = function(delta)

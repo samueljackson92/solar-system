@@ -24,7 +24,7 @@ function bindBufferToShader(buffer, shaderAttribute)
     gl.vertexAttribPointer(shaderAttribute, buffer.itemSize, gl.FLOAT, false, 0, 0);
 }
 
-function setMatrixUniforms(modelViewMatrix)
+function setMatrixUniforms(shaderProgram, modelViewMatrix)
 {
     gl.uniformMatrix4fv(shaderProgram.pMatrixUniform, false, perspectiveMatrix);
     gl.uniformMatrix4fv(shaderProgram.mvMatrixUniform, false, modelViewMatrix);
