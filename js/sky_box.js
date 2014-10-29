@@ -181,9 +181,9 @@ SkyBox.prototype.draw = function(modelViewMatrix)
     vec3.scale(this.positionVector, this.positionVector, -1);
 
     mat4.translate(modelViewMatrix, modelViewMatrix, this.positionVector);
-    mat4.scale(modelViewMatrix, modelViewMatrix, [2000,2000,2000]);
+    mat4.scale(modelViewMatrix, modelViewMatrix, [10000,10000,10000]);
 
-    gl.uniform3f(this.shaderProgram.ambientColorUniform, 0.3,0.3,0.3);
+    gl.uniform3f(this.shaderProgram.ambientColorUniform, 0.5,0.5,0.5);
 
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_CUBE_MAP, this.texture);

@@ -174,6 +174,9 @@ function drawScene()
 
     camera.move(perspectiveMatrix);
     solarSystem.drawScene(mvMatrix);
+
+    mat4.translate(mvMatrix, mvMatrix, camera.position);
+    skyBox.draw(mvMatrix);
 }
 
 function resizeViewport()

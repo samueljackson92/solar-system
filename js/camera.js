@@ -6,7 +6,10 @@ function Camera()
 
     this.position = vec3.fromValues(0,0,0);
 
-    this.speed = 0;
+    this.xSpeed = 0;
+    this.ySpeed = 0;
+    this.zSpeed = 0;
+
     this.theta = 0;
     this.phi = 0;
 
@@ -22,23 +25,37 @@ function Camera()
     this.S_KEY = 83;
     this.A_KEY = 65;
     this.D_KEY = 68;
+    this.R_KEY = 82;
+    this.F_KEY = 70;
+    this.X_KEY = 88;
+    this.C_KEY = 67;
 }
 
 
 
 Camera.prototype.handleCameraKeys = function handleKeys() {
-    if (currentlyPressedKeys[this.LEFT_KEY]) {
-        this.theta += 1;
-    } else if (currentlyPressedKeys[this.RIGHT_KEY]) {
-        this.theta += -1;
+    if (currentlyPressedKeys[this.W_KEY]) {
+        this.zSpeed = 0.1;
+    } else if (currentlyPressedKeys[this.S_KEY]) {
+        this.zSpeed = -0.1;
+    } else {
+        this.zSpeed = 0;
     }
 
-    if (currentlyPressedKeys[this.W_KEY]) {
-        this.speed = 0.1;
-    } else if (currentlyPressedKeys[this.S_KEY]) {
-        this.speed = -0.1;
+    if (currentlyPressedKeys[this.A_KEY]) {
+        this.xSpeed = 0.1;
+    } else if (currentlyPressedKeys[this.D_KEY]) {
+        this.xSpeed = -0.1;
     } else {
-        this.speed = 0;
+        this.xSpeed = 0;
+    }
+
+    if (currentlyPressedKeys[this.R_KEY]) {
+        this.ySpeed = 0.1;
+    } else if (currentlyPressedKeys[this.F_KEY]) {
+        this.ySpeed = -0.1;
+    } else {
+        this.ySpeed = 0;
     }
 
     if(currentlyPressedKeys[this.UP_KEY])
@@ -50,11 +67,20 @@ Camera.prototype.handleCameraKeys = function handleKeys() {
         this.phi -= 1;
     }
 
-    if(currentlyPressedKeys[this.A_KEY])
+    if(currentlyPressedKeys[this.LEFT_KEY])
+    {
+        this.theta += 1;
+    }
+    else if (currentlyPressedKeys[this.RIGHT_KEY])
+    {
+        this.theta -= 1;
+    }
+
+    if(currentlyPressedKeys[this.X_KEY])
     {
         this.yaw += 1;
     }
-    else if (currentlyPressedKeys[this.D_KEY])
+    else if (currentlyPressedKeys[this.C_KEY])
     {
         this.yaw -= 1;
     }
@@ -62,21 +88,19 @@ Camera.prototype.handleCameraKeys = function handleKeys() {
 
 Camera.prototype.update = function(delta)
 {
-    if (this.speed != 0)
-    {
-        this.zPos -= this.speed * delta;
-    }
+    var speed = vec3.fromValues(this.xSpeed, this.ySpeed, this.zSpeed);
+    vec3.scale(speed, speed, delta);
+    vec3.add(this.position, this.position, speed);
 
-    if (this.thetaRate > 0)
-    {
-        this.xPos = this.zPos * Math.cos(degToRad(this.theta));
-    }
+    var r = vec3.length(this.position);
+    this.xPos = r * Math.cos(degToRad(this.theta)) * Math.sin(degToRad(this.phi));
+    this.yPos = r * Math.sin(degToRad(this.theta)) * Math.sin(degToRad(this.phi));
+    this.zPos = r * Math.cos(degToRad(this.phi));
 }
 
 Camera.prototype.move = function(perspectiveMatrix)
 {
-    this.position = vec3.fromValues(-this.xPos, -this.yPos, -this.zPos);
-    mat4.rotate(perspectiveMatrix, perspectiveMatrix, degToRad(-this.yaw), [0, 1, 0]);
+    mat4.rotate(perspectiveMatrix, perspectiveMatrix, degToRad(this.yaw), [0, 1, 0]);
     mat4.translate(perspectiveMatrix, perspectiveMatrix, this.position);
     mat4.rotate(perspectiveMatrix, perspectiveMatrix, degToRad(this.theta), [0, 1, 0]);
     mat4.rotate(perspectiveMatrix, perspectiveMatrix, degToRad(this.phi), [0, 0, 1]);
