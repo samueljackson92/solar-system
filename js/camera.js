@@ -34,6 +34,7 @@ function Camera()
 
 
 Camera.prototype.handleCameraKeys = function handleKeys() {
+    //moving on the z direction
     if (currentlyPressedKeys[this.W_KEY]) {
         this.zSpeed = 0.1;
     } else if (currentlyPressedKeys[this.S_KEY]) {
@@ -50,9 +51,9 @@ Camera.prototype.handleCameraKeys = function handleKeys() {
         this.xSpeed = 0;
     }
 
-    if (currentlyPressedKeys[this.R_KEY]) {
+    if (currentlyPressedKeys[this.F_KEY]) {
         this.ySpeed = 0.1;
-    } else if (currentlyPressedKeys[this.F_KEY]) {
+    } else if (currentlyPressedKeys[this.R_KEY]) {
         this.ySpeed = -0.1;
     } else {
         this.ySpeed = 0;
@@ -60,11 +61,11 @@ Camera.prototype.handleCameraKeys = function handleKeys() {
 
     if(currentlyPressedKeys[this.UP_KEY])
     {
-        this.phi += 1;
+        this.phi -= 1;
     }
     else if (currentlyPressedKeys[this.DOWN_KEY])
     {
-        this.phi -= 1;
+        this.phi += 1;
     }
 
     if(currentlyPressedKeys[this.LEFT_KEY])
@@ -78,11 +79,11 @@ Camera.prototype.handleCameraKeys = function handleKeys() {
 
     if(currentlyPressedKeys[this.X_KEY])
     {
-        this.yaw += 1;
+        this.yaw -= 1;
     }
     else if (currentlyPressedKeys[this.C_KEY])
     {
-        this.yaw -= 1;
+        this.yaw += 1;
     }
 }
 
