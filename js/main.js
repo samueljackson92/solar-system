@@ -97,16 +97,25 @@ function webGlStart()
     neptune = planetFactory.create(30,30, 5, textureLoader.textures["neptune"]);
     neptune.initShaders(planetShader);
     neptune.setOrbitParameters(0.000, 950, 0, 0);
-    neptune.setOrbitTilt(-40);
+    // neptune.setOrbitTilt(-40);
     sol.addChild(neptune);
 
     solarSystem.addDrawableObject(sol);
 
-    // skyBox = new SkyBox('img/stars_bk.jpg');
-    // solarSystem.addDrawableObject(skyBox);
+    var skyBoxShader = makeShader("basic-vs", 'basic-fs');
 
-    // initShaders();
+    var urls = [
+       "img/sky/right.png", "img/sky/left.png",
+       "img/sky/bottom.png", "img/sky/top.png",
+       "img/sky/front.png", "img/sky/back.png",
+    ];
+
+    skyBox = new SkyBox(urls);
+    skyBox.initShaders(skyBoxShader);
+    solarSystem.addDrawableObject(skyBox);
+
     solarSystem.initBuffers();
+
     tick();
 }
 
@@ -160,12 +169,10 @@ function drawScene()
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
     var aspectRatio = gl.canvas.clientWidth / gl.canvas.clientHeight;
-    mat4.perspective(perspectiveMatrix, 45, aspectRatio, 0.1, 5000.0);
+    mat4.perspective(perspectiveMatrix, 45, aspectRatio, 0.1, 20000.0);
     mat4.identity(mvMatrix);
 
     camera.move(perspectiveMatrix);
-    //skybox should always be central to the camera.
-    // skyBox.setPositionVector(camera.getCameraPosition());
     solarSystem.drawScene(mvMatrix);
 }
 
@@ -188,6 +195,8 @@ function animate()
     {
         var delta = timeNow - lastTime;
         camera.update(delta);
+        //skybox should always be central to the camera.
+        skyBox.setPositionVector(camera.getCameraPosition());
         solarSystem.animateScene(delta);
     }
     lastTime = timeNow;

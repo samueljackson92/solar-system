@@ -12,11 +12,13 @@
             varying vec3 vTransformedNormal;
             varying vec4 vPosition;
 
+            varying vec3 vCoords;
+
             uniform vec3 uAmbientColor;
-            uniform sampler2D uSampler;
+            uniform samplerCube uSampler;
 
             void main(void) {
-                vec4 fragmentColor = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t));
+                vec4 fragmentColor = textureCube(uSampler, vCoords);
                 gl_FragColor = vec4(fragmentColor.rgb * uAmbientColor, fragmentColor.a);
             }
         </script>
@@ -33,11 +35,14 @@
             varying vec3 vTransformedNormal;
             varying vec4 vPosition;
 
+            varying vec3 vCoords;
+
             void main(void) {
                 vPosition = uMVMatrix * vec4(aVertexPosition, 1.0);
                 gl_Position = uPMatrix * vPosition;
                 vTextureCoord = aTextureCoord;
                 vTransformedNormal = uNMatrix * aVertexNormal;
+                vCoords = vPosition.xyz;
             }
         </script>
 

@@ -171,6 +171,8 @@ CelestialBody.prototype.draw = function(modelViewMatrix)
     this.setLightingUniforms();
     setMatrixUniforms(this.shaderProgram, modelViewMatrix);
     gl.drawElements(gl.TRIANGLES, this.vertexIndexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
+
+    gl.bindTexture(gl.TEXTURE_2D, null);
 }
 
 CelestialBody.prototype.setLightingUniforms = function()
