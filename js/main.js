@@ -31,6 +31,7 @@ function webGlStart()
     var planetFactory = new CelestialBodyFactory();
     solarSystem = new SceneGraph();
     camera = new Camera();
+    camera.setCameraPosition([0,0,-500]);
     textureLoader = new TextureLoader();
 
     perspectiveMatrix = mat4.create();

@@ -111,3 +111,8 @@ Camera.prototype.getCameraPosition = function()
 {
     return this.position;
 }
+
+Camera.prototype.setCameraPosition = function(position)
+{
+    this.position = position;
+}
