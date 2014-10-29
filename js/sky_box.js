@@ -1,6 +1,5 @@
-function SkyBox(textureName)
+function SkyBox(texture)
 {
-    var texture = this.createTexture(textureName);
     Drawable.call(this, texture);
 
     this.vertexPositionBuffer = gl.createBuffer();
@@ -202,53 +201,5 @@ SkyBox.prototype.draw = function(modelViewMatrix)
 
 SkyBox.prototype.animate = function(delta) {}
 
-SkyBox.prototype.createTexture = function(uris)
-{
-    var texture = gl.createTexture();
-    var numberOfLoadedTextures = 0;
-    texture.images = [];
-
-    for (var i=0; i < uris.length; i++)
-    {
-        var image = new Image();
-        image.onload = function()
-        {
-            numberOfLoadedTextures++;
-
-            if (numberOfLoadedTextures === 6)
-            {
-                var targets = [
-                   gl.TEXTURE_CUBE_MAP_POSITIVE_X, gl.TEXTURE_CUBE_MAP_NEGATIVE_X,
-                   gl.TEXTURE_CUBE_MAP_POSITIVE_Y, gl.TEXTURE_CUBE_MAP_NEGATIVE_Y,
-                   gl.TEXTURE_CUBE_MAP_POSITIVE_Z, gl.TEXTURE_CUBE_MAP_NEGATIVE_Z
-                ];
-
-                gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-                gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture);
-
-                for (var j = 0; j < targets.length; j++)
-                {
-                    gl.texImage2D(targets[j], 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, texture.images[j]);
-                    gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-                    gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-                }
-
-                // gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-                // gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
-                gl.generateMipmap(gl.TEXTURE_CUBE_MAP);
-                // gl.bindTexture(gl.TEXTURE_CUBE_MAP, null);
-            }
-        };
-        image.src = uris[i];
-        texture.images.push(image);
-    }
-
-    return texture;
-}
-
-SkyBox.prototype.handleLoadedTexture = function(texture, i)
-{
-
-}
 
 extend(Drawable, SkyBox);

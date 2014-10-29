@@ -103,14 +103,7 @@ function webGlStart()
     solarSystem.addDrawableObject(sol);
 
     var skyBoxShader = makeShader("basic-vs", 'basic-fs');
-
-    var urls = [
-       "img/sky/right.png", "img/sky/left.png",
-       "img/sky/bottom.png", "img/sky/top.png",
-       "img/sky/front.png", "img/sky/back.png",
-    ];
-
-    skyBox = new SkyBox(urls);
+    skyBox = new SkyBox(textureLoader.textures["skybox"]);
     skyBox.initShaders(skyBoxShader);
     solarSystem.addDrawableObject(skyBox);
 
@@ -174,8 +167,6 @@ function drawScene()
 
     camera.move(perspectiveMatrix);
     solarSystem.drawScene(mvMatrix);
-
-    mat4.translate(mvMatrix, mvMatrix, camera.position);
     skyBox.draw(mvMatrix);
 }
 
