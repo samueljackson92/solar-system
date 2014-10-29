@@ -28,35 +28,33 @@ function webGlStart()
     document.onkeydown = handleKeyDown;
     document.onkeyup = handleKeyUp;
 
-    var planetFactory = new CelestialBodyFactory();
     solarSystem = new SceneGraph();
     camera = new Camera();
-    camera.setCameraPosition([0,0,-500]);
+    camera.setCameraPosition([0,0,-100]);
     textureLoader = new TextureLoader();
 
     perspectiveMatrix = mat4.create();
     mvMatrix = mat4.create();
 
     var planetShader = makeShader("shader-vs", 'shader-fs');
-    sol = planetFactory.create(60,60,50, textureLoader.textures["sun"], true);
+    sol = new CelestialBody(60,60,50, textureLoader.textures["sun"], true);
     sol.initShaders(planetShader);
-    sol.setPositionVector([0,0,0]);
-    // sol.setRotationSpeed([0,15,0]);
+    sol.setRotationSpeed([0,15,0]);
 
-    mercury = planetFactory.create(30,30, 1.7, textureLoader.textures["mercury"]);
+    mercury = new CelestialBody(30,30, 1.7, textureLoader.textures["mercury"]);
     mercury.initShaders(planetShader);
     mercury.setOrbitParameters(0.000, 100, 0.2, 0);
     // mercury.setOrbitTilt(3.38);
     sol.addChild(mercury);
     //
-    venus = planetFactory.create(30,30, 5, textureLoader.textures["venus"]);
+    venus = new CelestialBody(30,30, 5, textureLoader.textures["venus"]);
     venus.initShaders(planetShader);
     venus.setOrbitParameters(0.000, 150, 0, 0);
     // venus.setOrbitTilt(-5);
     sol.addChild(venus);
     //
     //earth subsystem
-    earth = planetFactory.create(30,30, 5, textureLoader.textures["earth"], false);
+    earth = new CelestialBody(30,30, 5, textureLoader.textures["earth"]);
     earth.initShaders(planetShader);
     earth.setOrbitParameters(0.000, 250, 0, 0);
     earth.setRotationSpeed([0,25,0]);
@@ -64,38 +62,38 @@ function webGlStart()
     // earth.setOrbitTilt(-5);
     sol.addChild(earth);
     // //
-    moon = planetFactory.create(30,30, 1, textureLoader.textures["moon"]);
+    moon = new CelestialBody(30,30, 1, textureLoader.textures["moon"]);
     moon.initShaders(planetShader);
     moon.setOrbitParameters(0.01, 5, 0.5, 0);
     moon.setOrbitTilt(-45);
     // moon.setRotationSpeed([0,35,0]);
     earth.addChild(moon);
     // //
-    mars = planetFactory.create(30,30, 5, textureLoader.textures["mars"]);
+    mars = new CelestialBody(30,30, 5, textureLoader.textures["mars"]);
     mars.initShaders(planetShader);
     mars.setOrbitParameters(0.000, 350, 0, 0);
     // mars.setOrbitTilt(-0);
     sol.addChild(mars);
     //
-    jupiter = planetFactory.create(30,30, 10, textureLoader.textures["jupiter"]);
+    jupiter = new CelestialBody(30,30, 10, textureLoader.textures["jupiter"]);
     jupiter.initShaders(planetShader);
     jupiter.setOrbitParameters(0.000, 650, 0, 0);
     // jupiter.setOrbitTilt(-20);
     sol.addChild(jupiter);
     //
-    saturn = planetFactory.create(30,30, 10, textureLoader.textures["saturn"]);
+    saturn = new CelestialBody(30,30, 10, textureLoader.textures["saturn"]);
     saturn.initShaders(planetShader);
     saturn.setOrbitParameters(0.000, 750, 0, 0);
     // saturn.setOrbitTilt(-25);
     sol.addChild(saturn);
     //
-    uranus = planetFactory.create(30,30, 5, textureLoader.textures["uranus"]);
+    uranus = new CelestialBody(30,30, 5, textureLoader.textures["uranus"]);
     uranus.initShaders(planetShader);
     uranus.setOrbitParameters(0.000, 850, 0, 0);
     // uranus.setOrbitTilt(-30);
     sol.addChild(uranus);
     //
-    neptune = planetFactory.create(30,30, 5, textureLoader.textures["neptune"]);
+    neptune = new CelestialBody(30,30, 5, textureLoader.textures["neptune"]);
     neptune.initShaders(planetShader);
     neptune.setOrbitParameters(0.000, 950, 0, 0);
     // neptune.setOrbitTilt(-40);
@@ -167,8 +165,9 @@ function drawScene()
     mat4.identity(mvMatrix);
 
     camera.move(perspectiveMatrix);
+    //skybox should always be central to the camera.
+    skyBox.setPositionVector(camera.getCameraPosition());
     solarSystem.drawScene(mvMatrix);
-    skyBox.draw(mvMatrix);
 }
 
 function resizeViewport()
@@ -190,8 +189,6 @@ function animate()
     {
         var delta = timeNow - lastTime;
         camera.update(delta);
-        //skybox should always be central to the camera.
-        skyBox.setPositionVector(camera.getCameraPosition());
         solarSystem.animateScene(delta);
     }
     lastTime = timeNow;

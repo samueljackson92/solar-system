@@ -26,7 +26,6 @@ function TextureLoader()
     {
         if (this.textureFileNames[key] instanceof Array)
         {
-            console.log(this.textureFileNames[key]);
             this.textures[key] = this.createCubeMap(this.textureFileNames[key]);
         }
         else
@@ -38,9 +37,10 @@ function TextureLoader()
 
 TextureLoader.prototype.createTexture = function(uri)
 {
-    var texture = gl.createTexture();
-    texture.image = new Image();
     var parent = this;
+    var texture = gl.createTexture();
+    texture.texType = gl.TEXTURE_2D;
+    texture.image = new Image();
     texture.image.onload = function()
     {
         parent.handleLoadedTexture(texture);
@@ -53,6 +53,7 @@ TextureLoader.prototype.createCubeMap = function(uris)
 {
     var parent = this;
     var texture = gl.createTexture();
+    texture.texType = gl.TEXTURE_CUBE_MAP;
     var numberOfLoadedTextures = 0;
     texture.images = [];
 

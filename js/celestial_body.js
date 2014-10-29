@@ -1,72 +1,7 @@
-function CelestialBodyFactory(){}
-
-CelestialBodyFactory.prototype.create = function(latitudeBands, longitudeBands, radius, texture, isLightSource)
+function CelestialBody(latitudeBands, longitudeBands, radius, texture, isLightSource)
 {
-    this.latitudeBands = latitudeBands;
-    this.longitudeBands = longitudeBands;
-    this.radius = radius;
-    this.texture = texture;
-
-    var newBody = new CelestialBody(this.texture, isLightSource);
-    return this.makeVertexData(newBody);
-}
-
-CelestialBodyFactory.prototype.makeVertexData = function(newBody)
-{
-    for(var latitudeNumber = 0; latitudeNumber <= this.latitudeBands; latitudeNumber++)
-    {
-        var theta = latitudeNumber * Math.PI / this.latitudeBands;
-        var sinTheta = Math.sin(theta);
-        var cosTheta = Math.cos(theta);
-
-        for(longitudeNumber = 0; longitudeNumber <= this.longitudeBands; longitudeNumber++)
-        {
-            var phi = longitudeNumber * 2 * Math.PI / this.longitudeBands;
-            var sinPhi = Math.sin(phi);
-            var cosPhi = Math.cos(phi);
-
-            var x = cosPhi * sinTheta;
-            var y = cosTheta;
-            var z = sinPhi * sinTheta;
-
-            var u = 1 - (longitudeNumber / this.longitudeBands);
-            var v = 1 - (latitudeNumber / this.latitudeBands);
-
-            newBody.normalData.push(x);
-            newBody.normalData.push(y);
-            newBody.normalData.push(z);
-
-            newBody.vertexPositionData.push(this.radius * x);
-            newBody.vertexPositionData.push(this.radius * y);
-            newBody.vertexPositionData.push(this.radius * z);
-
-            newBody.textureCoordinateData.push(u);
-            newBody.textureCoordinateData.push(v);
-        }
-    }
-
-    for (var latitudeNumber = 0; latitudeNumber < this.latitudeBands; latitudeNumber++)
-    {
-      for (var longitudeNumber = 0; longitudeNumber < this.longitudeBands; longitudeNumber++) {
-        var first = (latitudeNumber * (this.longitudeBands + 1)) + longitudeNumber;
-        var second = first + this.longitudeBands + 1;
-        newBody.indexData.push(first);
-        newBody.indexData.push(second);
-        newBody.indexData.push(first + 1);
-
-        newBody.indexData.push(second);
-        newBody.indexData.push(second + 1);
-        newBody.indexData.push(first + 1);
-      }
-    }
-
-    return newBody;
-}
-
-function CelestialBody(texture, isLightSource)
-{
-    Drawable.call(this, texture, isLightSource);
-
+    Sphere.call(this, latitudeBands, longitudeBands, radius, texture, isLightSource);
+    
     this.rotation = vec3.fromValues(0,0,0);
     this.rotationSpeed = vec3.fromValues(0,0,0);
 
@@ -157,22 +92,9 @@ CelestialBody.prototype.draw = function(modelViewMatrix)
     mat4.rotateY(modelViewMatrix, modelViewMatrix, this.rotation[1]);
     mat4.rotateZ(modelViewMatrix, modelViewMatrix, this.rotation[2]);
 
-    //texture
-    gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE_2D, this.texture);
-    gl.uniform1i(this.shaderProgram.samplerUniform, 0);
-
-    bindBufferToShader(this.vertexPositionBuffer, this.shaderProgram.vertexPositionAttribute);
-    bindBufferToShader(this.vertexTextureCoordinateBuffer, this.shaderProgram.textureCoordAttribute);
-    bindBufferToShader(this.vertexNormalBuffer, this.shaderProgram.vertexNormalAttribute);
-
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.vertexIndexBuffer);
-
     this.setLightingUniforms();
     setMatrixUniforms(this.shaderProgram, modelViewMatrix);
-    gl.drawElements(gl.TRIANGLES, this.vertexIndexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
-
-    gl.bindTexture(gl.TEXTURE_2D, null);
+    this.drawModel(this.shaderProgram);
 }
 
 CelestialBody.prototype.setLightingUniforms = function()
@@ -262,4 +184,4 @@ CelestialBody.prototype.setOrbitRotationSpeed = function(rotationSpeedVector)
     this.orbitRotationSpeed = rotationSpeedVector;
 }
 
-extend(Drawable, CelestialBody);
+extend(Sphere, CelestialBody);
