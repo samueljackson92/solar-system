@@ -69,7 +69,7 @@ Camera.prototype.handleCameraKeys = function(controller) {
     {
         this.yaw += 1;
     }
-}
+};
 
 Camera.prototype.update = function(delta)
 {
@@ -81,7 +81,7 @@ Camera.prototype.update = function(delta)
     this.xPos = r * Math.cos(degToRad(this.theta)) * Math.sin(degToRad(this.phi));
     this.yPos = r * Math.sin(degToRad(this.theta)) * Math.sin(degToRad(this.phi));
     this.zPos = r * Math.cos(degToRad(this.phi));
-}
+};
 
 Camera.prototype.move = function(perspectiveMatrix)
 {
@@ -89,14 +89,14 @@ Camera.prototype.move = function(perspectiveMatrix)
     mat4.translate(perspectiveMatrix, perspectiveMatrix, this.position);
     mat4.rotate(perspectiveMatrix, perspectiveMatrix, degToRad(this.theta), [0, 1, 0]);
     mat4.rotate(perspectiveMatrix, perspectiveMatrix, degToRad(this.phi), [0, 0, 1]);
-}
+};
 
 Camera.prototype.getCameraPosition = function()
 {
     return this.position;
-}
+};
 
 Camera.prototype.setCameraPosition = function(position)
 {
     this.position = position;
-}
+};
