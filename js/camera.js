@@ -15,73 +15,57 @@ function Camera()
 
     this.yaw = 0;
     this.yawRate = 0;
-
-    this.LEFT_KEY = 37;
-    this.UP_KEY = 38;
-    this.RIGHT_KEY = 39;
-    this.DOWN_KEY = 40;
-
-    this.W_KEY = 87;
-    this.S_KEY = 83;
-    this.A_KEY = 65;
-    this.D_KEY = 68;
-    this.R_KEY = 82;
-    this.F_KEY = 70;
-    this.X_KEY = 88;
-    this.C_KEY = 67;
 }
 
-
-
-Camera.prototype.handleCameraKeys = function handleKeys() {
+Camera.prototype.handleCameraKeys = function(controller) {
     //moving on the z direction
-    if (currentlyPressedKeys[this.W_KEY]) {
+    if (keyController.isPressed(keyController.W_KEY)) {
         this.zSpeed = 0.1;
-    } else if (currentlyPressedKeys[this.S_KEY]) {
+    } else if (keyController.isPressed(keyController.S_KEY)) {
         this.zSpeed = -0.1;
     } else {
         this.zSpeed = 0;
     }
 
-    if (currentlyPressedKeys[this.A_KEY]) {
+    if (keyController.isPressed(keyController.A_KEY)) {
         this.xSpeed = 0.1;
-    } else if (currentlyPressedKeys[this.D_KEY]) {
+    } else if (keyController.isPressed(keyController.D_KEY)) {
         this.xSpeed = -0.1;
     } else {
         this.xSpeed = 0;
     }
 
-    if (currentlyPressedKeys[this.F_KEY]) {
+    if (keyController.isPressed(keyController.F_KEY)) {
         this.ySpeed = 0.1;
-    } else if (currentlyPressedKeys[this.R_KEY]) {
+    } else if (keyController.isPressed(keyController.R_KEY)) {
         this.ySpeed = -0.1;
     } else {
         this.ySpeed = 0;
     }
 
-    if(currentlyPressedKeys[this.UP_KEY])
+    if(keyController.isPressed(keyController.UP_KEY))
     {
         this.phi -= 1;
     }
-    else if (currentlyPressedKeys[this.DOWN_KEY])
+    else if (keyController.isPressed(keyController.DOWN_KEY))
     {
         this.phi += 1;
     }
 
-    if(currentlyPressedKeys[this.LEFT_KEY])
+    if(keyController.isPressed(keyController.LEFT_KEY))
     {
         this.theta += 1;
     }
-    else if (currentlyPressedKeys[this.RIGHT_KEY])
+    else if (keyController.isPressed(keyController.RIGHT_KEY))
     {
         this.theta -= 1;
     }
 
-    if(currentlyPressedKeys[this.X_KEY])
+    if(keyController.isPressed(keyController.X_KEY))
     {
         this.yaw -= 1;
     }
-    else if (currentlyPressedKeys[this.C_KEY])
+    else if (keyController.isPressed(keyController.C_KEY))
     {
         this.yaw += 1;
     }

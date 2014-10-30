@@ -8,92 +8,86 @@ var perspectiveMatrix;
 var mvMatrix;
 
 var skyBox;
-// solar_system_parameters = {
-//     'mercury': {
-//         'radius': 1.7,
-//         'orbit_parameters': {
-//             'velocity': 0.00047,
-//             'radius': 2.081,
-//             'inclincation': 3.38,
-//             'eccentrcity': 0.205,
-//         }
-//     }
-// }
 
 function webGlStart()
 {
     var canvas = document.getElementById("canvas");
     initWebGL(canvas);
 
-    document.onkeydown = handleKeyDown;
-    document.onkeyup = handleKeyUp;
+    perspectiveMatrix = mat4.create();
+    mvMatrix = mat4.create();
 
     solarSystem = new SceneGraph();
     camera = new Camera();
     camera.setCameraPosition([0,0,-100]);
     textureLoader = new TextureLoader();
 
-    perspectiveMatrix = mat4.create();
-    mvMatrix = mat4.create();
+    keyController = new KeyController();
+    document.onkeydown = function(event){
+        keyController.handleKeyDown(event);
+    };
+    document.onkeyup = function(event){
+        keyController.handleKeyUp(event);
+    };
 
     var planetShader = makeShader("shader-vs", 'shader-fs');
-    sol = new CelestialBody(60,60,50, textureLoader.textures["sun"], true);
+    sol = new CelestialBody(60,60,50, textureLoader.textures.sun, true);
     sol.initShaders(planetShader);
     sol.setRotationSpeed([0,15,0]);
 
-    mercury = new CelestialBody(30,30, 1.7, textureLoader.textures["mercury"]);
+    mercury = new CelestialBody(30,30, 1.7, textureLoader.textures.mercury);
     mercury.initShaders(planetShader);
     mercury.setOrbitParameters(0.000, 100, 0.2, 0);
     // mercury.setOrbitTilt(3.38);
     sol.addChild(mercury);
     //
-    venus = new CelestialBody(30,30, 5, textureLoader.textures["venus"]);
+    venus = new CelestialBody(30,30, 5, textureLoader.textures.venus);
     venus.initShaders(planetShader);
     venus.setOrbitParameters(0.000, 150, 0, 0);
     // venus.setOrbitTilt(-5);
     sol.addChild(venus);
     //
     //earth subsystem
-    earth = new CelestialBody(30,30, 5, textureLoader.textures["earth"]);
+    earth = new CelestialBody(30,30, 5, textureLoader.textures.earth);
     earth.initShaders(planetShader);
-    earth.setOrbitParameters(0.000, 250, 0, 0);
+    earth.setOrbitParameters(0.001, 250, 0, 0);
     earth.setRotationSpeed([0,25,0]);
-    // earth.setAxisTilt(-23);
-    // earth.setOrbitTilt(-5);
+    earth.setAxisTilt(-23);
+    earth.setOrbitTilt(-5);
     sol.addChild(earth);
     // //
-    moon = new CelestialBody(30,30, 1, textureLoader.textures["moon"]);
+    moon = new CelestialBody(30,30, 1, textureLoader.textures.moon);
     moon.initShaders(planetShader);
     moon.setOrbitParameters(0.01, 5, 0.5, 0);
     moon.setOrbitTilt(-45);
     // moon.setRotationSpeed([0,35,0]);
     earth.addChild(moon);
     // //
-    mars = new CelestialBody(30,30, 5, textureLoader.textures["mars"]);
+    mars = new CelestialBody(30,30, 5, textureLoader.textures.mars);
     mars.initShaders(planetShader);
     mars.setOrbitParameters(0.000, 350, 0, 0);
     // mars.setOrbitTilt(-0);
     sol.addChild(mars);
     //
-    jupiter = new CelestialBody(30,30, 10, textureLoader.textures["jupiter"]);
+    jupiter = new CelestialBody(30,30, 10, textureLoader.textures.jupiter);
     jupiter.initShaders(planetShader);
     jupiter.setOrbitParameters(0.000, 650, 0, 0);
     // jupiter.setOrbitTilt(-20);
     sol.addChild(jupiter);
     //
-    saturn = new CelestialBody(30,30, 10, textureLoader.textures["saturn"]);
+    saturn = new CelestialBody(30,30, 10, textureLoader.textures.saturn);
     saturn.initShaders(planetShader);
     saturn.setOrbitParameters(0.000, 750, 0, 0);
     // saturn.setOrbitTilt(-25);
     sol.addChild(saturn);
     //
-    uranus = new CelestialBody(30,30, 5, textureLoader.textures["uranus"]);
+    uranus = new CelestialBody(30,30, 5, textureLoader.textures.uranus);
     uranus.initShaders(planetShader);
     uranus.setOrbitParameters(0.000, 850, 0, 0);
     // uranus.setOrbitTilt(-30);
     sol.addChild(uranus);
     //
-    neptune = new CelestialBody(30,30, 5, textureLoader.textures["neptune"]);
+    neptune = new CelestialBody(30,30, 5, textureLoader.textures.neptune);
     neptune.initShaders(planetShader);
     neptune.setOrbitParameters(0.000, 950, 0, 0);
     // neptune.setOrbitTilt(-40);
@@ -102,7 +96,7 @@ function webGlStart()
     solarSystem.addDrawableObject(sol);
 
     var skyBoxShader = makeShader("basic-vs", 'basic-fs');
-    skyBox = new SkyBox(textureLoader.textures["skybox"]);
+    skyBox = new SkyBox(textureLoader.textures.skybox);
     skyBox.initShaders(skyBoxShader);
     solarSystem.addDrawableObject(skyBox);
 
@@ -150,7 +144,7 @@ function tick()
 {
     requestAnimFrame(tick);
     resizeViewport();
-    handleKeys();
+    keyController.handleKeys();
     drawScene();
     animate();
 }
@@ -192,19 +186,4 @@ function animate()
         solarSystem.animateScene(delta);
     }
     lastTime = timeNow;
-}
-
-var currentlyPressedKeys = {};
-
-function handleKeys()
-{
-    camera.handleCameraKeys();
-}
-
-function handleKeyDown(event) {
-    currentlyPressedKeys[event.keyCode] = true;
-}
-
-function handleKeyUp(event) {
-    currentlyPressedKeys[event.keyCode] = false;
 }

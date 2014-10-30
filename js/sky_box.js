@@ -32,9 +32,6 @@ SkyBox.prototype.draw = function(modelViewMatrix)
 {
     gl.useProgram(this.shaderProgram);
 
-    //move body to position in scene
-    // vec3.scale(this.positionVector, this.positionVector, -1);
-
     mat4.translate(modelViewMatrix, modelViewMatrix, this.positionVector);
     mat4.scale(modelViewMatrix, modelViewMatrix, [10000,10000,10000]);
 

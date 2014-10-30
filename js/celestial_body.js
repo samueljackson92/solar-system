@@ -1,7 +1,7 @@
 function CelestialBody(latitudeBands, longitudeBands, radius, texture, isLightSource)
 {
     Sphere.call(this, latitudeBands, longitudeBands, radius, texture, isLightSource);
-    
+
     this.rotation = vec3.fromValues(0,0,0);
     this.rotationSpeed = vec3.fromValues(0,0,0);
 
@@ -129,7 +129,7 @@ CelestialBody.prototype.animate = function(delta)
     vec3.scale(deltaRotation, deltaRotation,  Math.PI / 180);
     vec3.add(this.rotation, this.rotation, deltaRotation);
 
-    this.orbit(delta);
+    this.animateOrbit(delta);
 }
 
 CelestialBody.prototype.addChild = function(orbital)
@@ -142,7 +142,7 @@ CelestialBody.prototype.getChildren = function()
     return this.orbitals;
 }
 
-CelestialBody.prototype.orbit = function(delta)
+CelestialBody.prototype.animateOrbit = function(delta)
 {
     if(this.angularVelocity != 0)
     {
