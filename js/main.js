@@ -154,21 +154,6 @@ function tick()
     animate();
 }
 
-function drawScene()
-{
-    gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-
-    var aspectRatio = gl.canvas.clientWidth / gl.canvas.clientHeight;
-    mat4.perspective(perspectiveMatrix, 45, aspectRatio, 0.1, 20000.0);
-    mat4.identity(mvMatrix);
-
-    camera.move(perspectiveMatrix);
-    //skybox should always be central to the camera.
-    skyBox.setPositionVector(camera.getCameraPosition());
-    solarSystem.drawScene(mvMatrix);
-}
-
 function resizeViewport()
 {
     var width = canvas.clientHeight;
@@ -180,14 +165,34 @@ function resizeViewport()
     }
 }
 
+function drawScene()
+{
+    resetGLWindow();
+    camera.move(perspectiveMatrix);
+    solarSystem.drawScene(mvMatrix);
+}
+
+function resetGLWindow()
+{
+    gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+    var aspectRatio = gl.canvas.clientWidth / gl.canvas.clientHeight;
+    mat4.perspective(perspectiveMatrix, 45, aspectRatio, 0.1, 20000.0);
+    mat4.identity(mvMatrix);
+}
+
+
 var lastTime = 0;
 function animate()
 {
     var timeNow = new Date().getTime();
-    if (lastTime != 0)
+    if (lastTime !== 0)
     {
         var delta = timeNow - lastTime;
         camera.update(delta);
+        //skybox should always be central to the camera.
+        skyBox.setPositionVector(camera.getCameraPosition());
         solarSystem.animateScene(delta);
     }
     lastTime = timeNow;
