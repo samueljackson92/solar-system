@@ -2,6 +2,9 @@ function SceneGraph()
 {
     this.matrixStack = [];
     this.drawableObjects = [];
+
+    this.blendedObjects = [];
+    this.blendedMatrices = [];
 }
 
 SceneGraph.prototype.push = function(matrix)
@@ -27,6 +30,22 @@ SceneGraph.prototype.addDrawableObject = function(drawable)
 SceneGraph.prototype.drawScene = function(modelViewMatrix)
 {
     this.drawObjects(this.drawableObjects, modelViewMatrix);
+
+    while (this.blendedObjects.length > 0)
+    {
+        var blendedItem = this.blendedObjects.pop();
+        modelViewMatrix = this.blendedMatrices.pop();
+
+        // gl.disable(gl.DEPTH_TEST);
+        gl.enable(gl.BLEND);
+        gl.depthFunc(gl.LESS);
+        gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
+
+        blendedItem.draw(modelViewMatrix);
+
+        gl.disable(gl.BLEND);
+        // gl.enable(gl.DEPTH_TEST);
+    }
 }
 
 SceneGraph.prototype.drawObjects = function(drawList, modelViewMatrix)
@@ -47,7 +66,15 @@ SceneGraph.prototype.drawObjects = function(drawList, modelViewMatrix)
             modelViewMatrix = this.pop();
         }
 
-        currentDrawable.draw(modelViewMatrix);
+        if(currentDrawable.isBlended)
+        {
+            this.blendedObjects.push(currentDrawable);
+            this.blendedMatrices.push(mat4.clone(modelViewMatrix));
+        }
+        else
+        {
+            currentDrawable.draw(modelViewMatrix);
+        }
         modelViewMatrix = this.pop();
     }
 }

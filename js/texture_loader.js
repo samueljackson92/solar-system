@@ -14,6 +14,7 @@ function TextureLoader()
         "sun": "sunmap.jpg",
         "uranus": "uranusmap.jpg",
         "venus": "venusmap.jpg",
+        "saturnsRings": "ringsRGBA.png",
         "skybox": [
            "sky/right.png", "sky/left.png",
            "sky/bottom.png", "sky/top.png",

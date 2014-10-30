@@ -1,4 +1,4 @@
-function Drawable(texture, isLightSource)
+function Drawable(texture, isLightSource, isBlended)
 {
     //texture object defining look of the body
     this.texture = texture;
@@ -16,6 +16,7 @@ function Drawable(texture, isLightSource)
 
     this.positionVector = vec3.fromValues(0,0,0);
     this.isLightSource = (isLightSource !== undefined && isLightSource !== false);
+    this.isBlended = (isBlended !== undefined && isBlended !== false);
 }
 
 Drawable.prototype.initBuffers = function()
@@ -31,7 +32,7 @@ Drawable.prototype.setPositionVector = function(position)
     this.positionVector = position;
 }
 
-Drawable.prototype.drawModel = function(shaderProgram)
+Drawable.prototype.draw= function(shaderProgram)
 {
     //texture
     gl.activeTexture(gl.TEXTURE0);
@@ -49,9 +50,9 @@ Drawable.prototype.drawModel = function(shaderProgram)
 }
 
 
-function Cube(texture, isLightSource)
+function Cube(texture, isLightSource, isBlended)
 {
-    Drawable.call(this, texture, isLightSource);
+    Drawable.call(this, texture, isLightSource, isBlended);
 
     this.vertexPositionData = [
       // Front face

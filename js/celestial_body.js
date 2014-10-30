@@ -40,6 +40,8 @@ CelestialBody.prototype.initShaders = function(shaderProgram)
     //texture sampler
     this.shaderProgram.samplerUniform = gl.getUniformLocation(this.shaderProgram, "uSampler");
 
+    this.shaderProgram.alphaUniform = gl.getUniformLocation(this.shaderProgram, "uAlpha");
+
     //general lighting parameters
     this.shaderProgram.ambientColorUniform = gl.getUniformLocation(this.shaderProgram, "uAmbientColor");
     this.shaderProgram.emissiveColorUniform = gl.getUniformLocation(this.shaderProgram, "uEmissiveColor");
@@ -94,7 +96,8 @@ CelestialBody.prototype.draw = function(modelViewMatrix)
 
     this.setLightingUniforms();
     setMatrixUniforms(this.shaderProgram, modelViewMatrix);
-    this.drawModel(this.shaderProgram);
+
+    Drawable.prototype.draw.call(this, this.shaderProgram);
 }
 
 CelestialBody.prototype.setLightingUniforms = function()
@@ -120,6 +123,8 @@ CelestialBody.prototype.setLightingUniforms = function()
     gl.uniform1f(this.shaderProgram.constantLightAttenuation, 0.0001);
     gl.uniform1f(this.shaderProgram.linearLightAttenuation, 0.0001);
     gl.uniform1f(this.shaderProgram.quadraticLightAttenuation, 0.00001);
+    gl.uniform1f(this.shaderProgram.alphaUniform, 1.0);
+    gl.uniform1f(this.shaderProgram.alphaUniform, 1.0);
 }
 
 CelestialBody.prototype.animate = function(delta)
