@@ -55,38 +55,28 @@ SceneGraph.prototype.drawObjects = function(drawList, modelViewMatrix)
     {
         var currentDrawable = drawList[i];
         this.push(modelViewMatrix);
-        this.processChildren(currentDrawable, modelViewMatrix);
-        this.processDrawable(currentDrawable, modelViewMatrix);
+        //check if this is a celestial body and needs further drawing operations
+        if(currentDrawable instanceof CelestialBody)
+        {
+            currentDrawable.subSystemTransforms(modelViewMatrix);
+
+            this.push(modelViewMatrix);
+            var children = currentDrawable.getChildren();
+            this.drawObjects(children, modelViewMatrix);
+            modelViewMatrix = this.pop();
+        }
+        if(currentDrawable.isBlended)
+        {
+            this.blendingBuffer.push({
+                "drawable": currentDrawable,
+                "matrix": modelViewMatrix
+            });
+        }
+        else
+        {
+            currentDrawable.draw(modelViewMatrix);
+        }
         modelViewMatrix = this.pop();
-    }
-};
-
-SceneGraph.prototype.processChildren = function(currentDrawable, modelViewMatrix)
-{
-    //check if this is a celestial body and needs further drawing operations
-    if(currentDrawable instanceof CelestialBody)
-    {
-        currentDrawable.subSystemTransforms(modelViewMatrix);
-
-        this.push(modelViewMatrix);
-        var children = currentDrawable.getChildren();
-        this.drawObjects(children, modelViewMatrix);
-        modelViewMatrix = this.pop();
-    }
-};
-
-SceneGraph.prototype.processDrawable = function(currentDrawable, modelViewMatrix)
-{
-    if(currentDrawable.isBlended)
-    {
-        this.blendingBuffer.push({
-            "drawable": currentDrawable,
-            "matrix": modelViewMatrix
-        });
-    }
-    else
-    {
-        currentDrawable.draw(modelViewMatrix);
     }
 };
 
