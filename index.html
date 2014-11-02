@@ -67,10 +67,7 @@
             uniform vec3 uPointLightingColor;
 
             uniform float uMaterialShininess;
-
             uniform bool uNoDirectionalLight;
-            uniform vec3 uNonDirectionalAmbientLighting;
-
             uniform sampler2D uSampler;
 
             //calculate light attenuation from a light source
@@ -83,7 +80,7 @@
                 vec3 lightWeighting;
 
                 if (uNoDirectionalLight) {
-                    lightWeighting = uNonDirectionalAmbientLighting;
+                    lightWeighting = uAmbientColor;
                 } else {
                     vec3 normal = normalize(vTransformedNormal);
                     vec3 eyeDirection = normalize(-vPosition.xyz);

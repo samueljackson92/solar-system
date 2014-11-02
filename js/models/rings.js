@@ -18,8 +18,8 @@ Rings.prototype.draw = function(modelViewMatrix)
         "lightingParameters": {
             "isLightSource": this.isLightSource,
             "lightingPosition": [0,0,0],
-            "alpha": 1.0,
-            "ambientColor": vec3.fromValues(0.2,0.2,0.2),
+            "alpha": 0.8,
+            "ambientColor": vec3.fromValues(1.0,1.0,1.0),
         }
     });
 

@@ -98,8 +98,7 @@ CelestialBodyShader.prototype.init = function()
 CelestialBodyShader.prototype.setUniforms = function(params)
 {
     ShaderProgram.prototype.setUniforms.call(this, params);
-    gl.uniform1i(this.shaderProgram.noDirectionalLight, true);
-    gl.uniform3f(this.shaderProgram.nonDirectionalAmbientLighting, 0.2, 0.2, 0.2);
+    gl.uniform1i(this.shaderProgram.noDirectionalLight, params.noDirectionalLight);
 
     if(params.lightingParameters.isLightSource)
     {
@@ -107,7 +106,7 @@ CelestialBodyShader.prototype.setUniforms = function(params)
     }
     else
     {
-        gl.uniform3f(this.emissiveColorUniform, 0.1,0.1,0.1);
+        gl.uniform3f(this.emissiveColorUniform, 0,0,0);
     }
 
     gl.uniform3fv(this.pointLightingLocationUniform, params.lightingParameters.lightingPosition);
