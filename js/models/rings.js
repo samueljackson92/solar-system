@@ -1,10 +1,6 @@
-function Rings(texture, isLightSource, isBlended)
+function Rings(creationParams)
 {
-    Cube.call(this, texture, isLightSource, isBlended);
-}
-
-Rings.prototype.initShaders = function(shaderProgram) {
-    this.shaderProgram = shaderProgram;
+    Cube.call(this, creationParams);
 }
 
 Rings.prototype.draw = function(modelViewMatrix)

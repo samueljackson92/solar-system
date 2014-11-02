@@ -1,7 +1,8 @@
-function Drawable(texture, isLightSource, isBlended)
+function Drawable(creationParams)
 {
     //texture object defining look of the body
-    this.texture = texture;
+    this.shaderProgram = creationParams.shader;
+    this.texture = creationParams.texture;
 
     // data arrays for vertices, normals etc.
     this.vertexPositionData = [];
@@ -15,8 +16,8 @@ function Drawable(texture, isLightSource, isBlended)
     this.vertexIndexBuffer = null;
 
     this.positionVector = vec3.fromValues(0,0,0);
-    this.isLightSource = (isLightSource !== undefined && isLightSource !== false);
-    this.isBlended = (isBlended !== undefined && isBlended !== false);
+    this.isLightSource = (creationParams.isLightSource !== undefined && creationParams.isLightSource !== false);
+    this.isBlended = (creationParams.isBlended !== undefined && creationParams.isBlended !== false);
 }
 
 Drawable.prototype.initBuffers = function()
@@ -50,9 +51,9 @@ Drawable.prototype.draw= function(shaderProgram)
 }
 
 
-function Cube(texture, isLightSource, isBlended)
+function Cube(creationParams)
 {
-    Drawable.call(this, texture, isLightSource, isBlended);
+    Drawable.call(this, creationParams);
 
     this.vertexPositionData = [
       // Front face
@@ -180,9 +181,13 @@ function Cube(texture, isLightSource, isBlended)
 
 extend(Drawable, Cube);
 
-function Sphere(latitudeBands, longitudeBands, radius, texture, isLightSource)
+function Sphere(creationParams)
 {
-    Drawable.call(this, texture, isLightSource);
+    Drawable.call(this, creationParams);
+
+    var latitudeBands = creationParams.dimensions.latitude;
+    var longitudeBands = creationParams.dimensions.longitude;
+    var radius = creationParams.dimensions.radius;
 
     for(var latitudeNumber = 0; latitudeNumber <= latitudeBands; latitudeNumber++)
     {

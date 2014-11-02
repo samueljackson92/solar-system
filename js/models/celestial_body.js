@@ -1,40 +1,37 @@
-function CelestialBody(latitudeBands, longitudeBands, radius, texture, isLightSource)
+function CelestialBody(creationParams)
 {
-    Sphere.call(this, latitudeBands, longitudeBands, radius, texture, isLightSource);
+    Sphere.call(this, creationParams);
 
     this.rotation = vec3.fromValues(0,0,0);
     this.rotationSpeed = vec3.fromValues(0,0,0);
-
-    this.theta = 0;
-
-    this.initalOrbitalRadius = 0;
-    this.currentOrbitalRadius = 0;
-    this.angularVelocity = 0;
-    this.orbitEccentricity = 0;
-    this.orbitalAxis = 0;
-
     this.axisTilt = 0;
-    this.orbitTilt = 0;
-    this.orbitals = [];
-}
 
-CelestialBody.prototype.initShaders = function(shaderProgram)
-{
-    this.shaderProgram = shaderProgram;
+    this.orbit = {};
+    this.orbit.theta = 0;
+
+    this.orbit.radius = 0;
+    this.orbit.currentRadius = 0;
+    this.orbit.velocity = 0;
+    this.orbit.eccentricity = 0;
+    this.orbit.axis = 0;
+    this.orbit.tilt = 0;
+
+
+    this.orbitals = [];
 }
 
 CelestialBody.prototype.subSystemTransforms = function(modelViewMatrix)
 {
     // tilt subsystem about it's orbital axis
-    if (this.orbitTilt != 0)
+    if (this.orbit.tilt != 0)
     {
-        mat4.rotate(modelViewMatrix, modelViewMatrix, degToRad(this.orbitTilt), [0,0,1]);
+        mat4.rotate(modelViewMatrix, modelViewMatrix, degToRad(this.orbit.tilt), [0,0,1]);
     }
 
     // orbit rotation
     var orbitVector = vec3.create();
-    orbitVector[(this.orbitalAxis+1) % 3] = 1;
-    mat4.rotate(modelViewMatrix, modelViewMatrix, this.theta, orbitVector);
+    orbitVector[(this.orbit.axis+1) % 3] = 1;
+    mat4.rotate(modelViewMatrix, modelViewMatrix, this.orbit.theta, orbitVector);
 
     //move body to position in scene
     mat4.translate(modelViewMatrix, modelViewMatrix, this.positionVector);
@@ -77,10 +74,6 @@ CelestialBody.prototype.animate = function(delta)
     this.animateOrbit(delta);
 }
 
-CelestialBody.prototype.addChild = function(orbital)
-{
-    this.orbitals.push(orbital);
-}
 
 CelestialBody.prototype.getChildren = function()
 {
@@ -89,44 +82,33 @@ CelestialBody.prototype.getChildren = function()
 
 CelestialBody.prototype.animateOrbit = function(delta)
 {
-    if(this.angularVelocity != 0)
+    if(this.orbit.velocity !== 0)
     {
-        this.currentOrbitalRadius = (this.initalOrbitalRadius * (1 + this.orbitEccentricity)) / (1 + this.orbitEccentricity * Math.cos(this.theta));
-        var deltaTheta = (delta*this.initalOrbitalRadius*this.initalOrbitalRadius*this.angularVelocity) / (this.currentOrbitalRadius*this.currentOrbitalRadius);
-        this.theta += deltaTheta;
+        this.orbit.currentRadius = (this.orbit.radius * (1 + this.orbit.eccentricity)) / (1 + this.orbit.eccentricity * Math.cos(this.orbit.theta));
+        var deltaTheta = (delta*this.orbit.radius*this.orbit.radius*this.orbit.velocity) / (this.orbit.currentRadius*this.orbit.currentRadius);
+        this.orbit.theta += deltaTheta;
 
-        this.positionVector[this.orbitalAxis] = this.currentOrbitalRadius;
+        this.positionVector[this.orbit.axis] = this.orbit.currentRadius;
     }
 }
 
-CelestialBody.prototype.setRotationSpeed = function(rotationSpeedVector)
+CelestialBody.prototype.addChild = function(orbital)
 {
-    this.rotationSpeed = rotationSpeedVector;
-}
+    this.orbitals.push(orbital);
+};
 
-CelestialBody.prototype.setOrbitParameters = function(angularVelocity, initialRadius, eccentricity, axis)
+CelestialBody.prototype.setRotation = function(params)
 {
-    this.angularVelocity = angularVelocity;
-    this.initalOrbitalRadius = initialRadius;
-    this.currentOrbitalRadius = initialRadius;
-    this.orbitEccentricity = eccentricity;
-    this.orbitalAxis = axis;
-    this.positionVector[this.orbitalAxis] = this.currentOrbitalRadius;
-}
+    this.rotationSpeed = params.speed;
+    this.axisTilt = params.tilt;
+};
 
-CelestialBody.prototype.setAxisTilt = function(tilt)
+CelestialBody.prototype.setOrbit = function(params)
 {
-    this.axisTilt = tilt;
-}
-
-CelestialBody.prototype.setOrbitTilt = function(tilt)
-{
-    this.orbitTilt = tilt;
-}
-
-CelestialBody.prototype.setOrbitRotationSpeed = function(rotationSpeedVector)
-{
-    this.orbitRotationSpeed = rotationSpeedVector;
-}
+    this.orbit = params;
+    this.orbit.theta = 0;
+    this.orbit.currentRadius = params.radius;
+    this.positionVector[this.orbit.axis] = this.orbit.radius;
+};
 
 extend(Sphere, CelestialBody);
