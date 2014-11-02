@@ -30,7 +30,9 @@ function webGlStart()
         keyController.handleKeyUp(event);
     };
 
-    var planetShader = makeShader("shader-vs", 'shader-fs');
+    var planetShader = new CelestialBodyShader("shader-vs", 'shader-fs');
+    planetShader.init();
+
     sol = new CelestialBody(60,60,50, textureLoader.textures.sun, true, false);
     sol.initShaders(planetShader);
     sol.setRotationSpeed([0,15,0]);
@@ -100,7 +102,9 @@ function webGlStart()
 
     solarSystem.addDrawableObject(sol);
 
-    var skyBoxShader = makeShader("basic-vs", 'basic-fs');
+    var skyBoxShader = new BasicShader("basic-vs", 'basic-fs');
+    skyBoxShader.init();
+
     skyBox = new SkyBox(textureLoader.textures.skybox);
     skyBox.initShaders(skyBoxShader);
     solarSystem.addDrawableObject(skyBox);
@@ -125,24 +129,6 @@ function initWebGL()
     {
         alert("Could not initialize WebGL!");
     }
-}
-
-function makeShader(vertexShaderName, fragmentShaderName)
-{
-    var fragmentShader = getShader(gl, vertexShaderName);
-    var vertexShader = getShader(gl, fragmentShaderName);
-
-    var shaderProgram = gl.createProgram();
-    gl.attachShader(shaderProgram, vertexShader);
-    gl.attachShader(shaderProgram, fragmentShader);
-    gl.linkProgram(shaderProgram);
-
-    if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS))
-    {
-        alert("Could not initialise shaders!");
-    }
-
-    return shaderProgram;
 }
 
 function tick()
