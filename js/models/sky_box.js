@@ -1,10 +1,6 @@
-function SkyBox(texture)
+function SkyBox(creationParams)
 {
-    Cube.call(this, texture, false);
-}
-
-SkyBox.prototype.initShaders = function(shaderProgram) {
-    this.shaderProgram = shaderProgram;
+    Cube.call(this, creationParams);
 }
 
 SkyBox.prototype.draw = function(modelViewMatrix)
