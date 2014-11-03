@@ -75,6 +75,10 @@ function CelestialBodyShader(vertexShaderName, fragmentShaderName)
 CelestialBodyShader.prototype.init = function()
 {
     ShaderProgram.prototype.init.call(this);
+
+    this.useDarkTexture = gl.getUniformLocation(this.shaderProgram, "useNightTexture");
+    this.samplerDarkUniform = gl.getUniformLocation(this.shaderProgram, "uSamplerDark");
+
     this.alphaUniform = gl.getUniformLocation(this.shaderProgram, "uAlpha");
 
     //general lighting parameters
