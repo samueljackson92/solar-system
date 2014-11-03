@@ -16,7 +16,9 @@ SkyBox.prototype.draw = function(modelViewMatrix)
             "lightingPosition": [0,0,0],
             "alpha": 1.0,
             "ambientColor": vec3.fromValues(0.5,0.5,0.5),
-        }
+        },
+        "texture": this.texture,
+        "useDarkTexture": false
     });
 
     Drawable.prototype.draw.call(this, this.shaderProgram);

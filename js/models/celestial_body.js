@@ -2,6 +2,8 @@ function CelestialBody(creationParams)
 {
     Sphere.call(this, creationParams);
 
+    this.useDarkTexture = creationParams.useDarkTexture;
+    this.textureDark = creationParams.textureDark;
     this.rotation = vec3.fromValues(0,0,0);
     this.rotationSpeed = vec3.fromValues(0,0,0);
     this.axisTilt = 0;
@@ -15,7 +17,6 @@ function CelestialBody(creationParams)
     this.orbit.eccentricity = 0;
     this.orbit.axis = 0;
     this.orbit.tilt = 0;
-
 
     this.orbitals = [];
 }
@@ -58,6 +59,9 @@ CelestialBody.prototype.draw = function(modelViewMatrix)
             "alpha": 1.0,
             "ambientColor": vec3.fromValues(0.2,0.2,0.2),
         },
+        "texture": this.texture,
+        "useDarkTexture": this.useDarkTexture,
+        "textureDark": this.textureDark
     });
 
 

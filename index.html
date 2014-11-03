@@ -68,7 +68,10 @@
 
             uniform float uMaterialShininess;
             uniform bool uNoDirectionalLight;
+
+            uniform bool useNightTexture;
             uniform sampler2D uSampler;
+            uniform sampler2D uSamplerDark;
 
             //calculate light attenuation from a light source
             float calculateLightAttentuation(float r)
@@ -78,6 +81,8 @@
 
             void main(void) {
                 vec3 lightWeighting;
+
+                vec4 fragmentColor = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t));
 
                 if (uNoDirectionalLight) {
                     lightWeighting = uAmbientColor;
@@ -95,8 +100,18 @@
                     specularLightWeighting *= diffuseLightWeighting;
 
                     lightWeighting = uEmissiveColor + lightAttenuation * uPointLightingColor * (uAmbientColor + specularLightWeighting + diffuseLightWeighting);
+
+                    if(useNightTexture)
+                    {
+                        vec4 lightColor = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t));
+                        vec4 darkColor = texture2D(uSamplerDark, vec2(vTextureCoord.s, vTextureCoord.t));
+
+                        fragmentColor.x = (lightColor.x * diffuseLightWeighting + darkColor.x * (1.0-diffuseLightWeighting));
+                        fragmentColor.y = (lightColor.y * diffuseLightWeighting + darkColor.y * (1.0-diffuseLightWeighting));
+                        fragmentColor.z = (lightColor.z * diffuseLightWeighting + darkColor.z * (1.0-diffuseLightWeighting));
+                    }
                 }
-                vec4 fragmentColor = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t));
+
                 gl_FragColor = vec4(fragmentColor.rgb * lightWeighting, fragmentColor.a * uAlpha);
             }
         </script>

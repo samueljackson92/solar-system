@@ -23,7 +23,7 @@ function webGlStart()
     textureLoader = new TextureLoader();
 
     keyController = new KeyController();
-    
+
     document.onkeydown = function(event){
         keyController.handleKeyDown(event);
     };
@@ -37,6 +37,7 @@ function webGlStart()
     sol = new CelestialBody({
         "shader": planetShader,
         "texture": textureLoader.textures.sun,
+        "useDarkTexture": false,
         "dimensions": {
             "latitude": 60,
             "longitude": 60,
@@ -53,6 +54,8 @@ function webGlStart()
     earth = new CelestialBody({
         "shader": planetShader,
         "texture": textureLoader.textures.earth,
+        "textureDark": textureLoader.textures.earthDark,
+        "useDarkTexture": true,
         "dimensions": {
             "latitude": 30,
             "longitude": 30,
@@ -67,7 +70,7 @@ function webGlStart()
 
     earth.setOrbit({
         "radius": 250,
-        "velocity": 0.0005,
+        "velocity": 0.00001,
         "eccentricity": 0,
         "axis": 0,
         "tilt": -5
