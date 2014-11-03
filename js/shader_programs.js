@@ -82,9 +82,9 @@ CelestialBodyShader.prototype.init = function()
     this.useDarkTexture = gl.getUniformLocation(this.shaderProgram, "useNightTexture");
     this.samplerDarkUniform = gl.getUniformLocation(this.shaderProgram, "uSamplerDark");
 
-    this.useAtomosphere = gl.getUniformLocation(this.shaderProgram, "useAtomosphere");
-    this.sampleAtomosphereUniform = gl.getUniformLocation(this.shaderProgram, "uSamplerAtomosphere");
-    this.atomosphereRotation = gl.getUniformLocation(this.shaderProgram, "uAtomosphereRotation");
+    this.useAtmosphere = gl.getUniformLocation(this.shaderProgram, "useAtmosphere");
+    this.sampleAtmosphereUniform = gl.getUniformLocation(this.shaderProgram, "uSamplerAtmosphere");
+    this.atmosphereRotation = gl.getUniformLocation(this.shaderProgram, "uAtmosphereRotation");
 
     this.alphaUniform = gl.getUniformLocation(this.shaderProgram, "uAlpha");
 
@@ -131,10 +131,8 @@ CelestialBodyShader.prototype.setUniforms = function(params)
     gl.uniform1f(this.linearLightAttenuation, 0.0001);
     gl.uniform1f(this.quadraticLightAttenuation, 0.00001);
 
-    gl.uniform1f(this.atomosphereRotation, params.atomosphereRotation);
-
+    //setup sampler for night side texture
     gl.uniform1i(this.useDarkTexture, params.useDarkTexture);
-
     if(params.useDarkTexture)
     {
         gl.activeTexture(gl.TEXTURE1);
@@ -142,12 +140,14 @@ CelestialBodyShader.prototype.setUniforms = function(params)
         gl.uniform1i(this.samplerDarkUniform, 1);
     }
 
-    gl.uniform1i(this.useAtomosphere, params.useAtomosphere);
-    if(params.useAtomosphere)
+    //setup sampler for atmosphere texture
+    gl.uniform1i(this.useAtmosphere, params.useAtmosphere);
+    if(params.useAtmosphere)
     {
         gl.activeTexture(gl.TEXTURE2);
-        gl.bindTexture(params.textureAtomosphere.texType, params.textureAtomosphere);
-        gl.uniform1i(this.sampleAtomosphereUniform, 2);
+        gl.bindTexture(params.textureAtmosphere.texType, params.textureAtmosphere);
+        gl.uniform1i(this.sampleAtmosphereUniform, 2);
+        gl.uniform1f(this.atmosphereRotation, params.atmosphereRotation);
     }
 };
 

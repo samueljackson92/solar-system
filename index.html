@@ -57,29 +57,60 @@
             //lighting uniforms
             uniform vec3 uAmbientColor;
             uniform vec3 uEmissiveColor;
-            uniform float uAlpha;
 
+            //light attenuation parameters
             uniform float uConstantLightAttenuation;
             uniform float uLinearLightAttenuation;
             uniform float uQuadraticLightAttenuation;
-            uniform float uAtomosphereRotation;
+            uniform float uAtmosphereRotation;
 
+            //point light location and colour uniforms
             uniform vec3 uPointLightingLocation;
             uniform vec3 uPointLightingColor;
 
             uniform float uMaterialShininess;
             uniform bool uNoDirectionalLight;
 
+            //texture sampler uniforms
             uniform sampler2D uSampler;
             uniform bool useNightTexture;
             uniform sampler2D uSamplerDark;
-            uniform bool useAtomosphere;
-            uniform sampler2D uSamplerAtomosphere;
+            uniform bool useAtmosphere;
+            uniform sampler2D uSamplerAtmosphere;
+
+            //alpha weight for textures
+            uniform float uAlpha;
 
             //calculate light attenuation from a light source
             float calculateLightAttentuation(float r)
             {
                 return min(1.0 / (uConstantLightAttenuation + uLinearLightAttenuation * r + uQuadraticLightAttenuation * r*r), uMaterialShininess);
+            }
+
+            // Sample from and rotate the atmosphere texture
+            vec4 textureAtmosphere(vec4 fragmentColor)
+            {
+                if (useAtmosphere)
+                {
+                    vec2 rotatedAtmosphere = vec2(vTextureCoord.x + uAtmosphereRotation, vTextureCoord.y);
+                    vec4 atmosphere = texture2D(uSamplerAtmosphere, vec2(rotatedAtmosphere.s, rotatedAtmosphere.t));
+                    fragmentColor = vec4(atmosphere.a) * atmosphere + vec4(1.0 - atmosphere.a) * fragmentColor;
+                }
+
+                return fragmentColor;
+            }
+
+            // Texture the dark side of the planet with interpolation between the two sides
+            vec4 textureDarkSideOfPlanet(vec4 fragmentColor, float diffuseLightWeighting)
+            {
+                if(useNightTexture)
+                {
+                    vec4 lightColor = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t));
+                    vec4 darkColor = texture2D(uSamplerDark, vec2(vTextureCoord.s, vTextureCoord.t));
+                    fragmentColor.xyz = (lightColor.xyz * diffuseLightWeighting + darkColor.xyz * (1.0-diffuseLightWeighting));
+                }
+
+                return fragmentColor;
             }
 
             void main(void) {
@@ -99,34 +130,16 @@
                     float lightAttenuation = calculateLightAttentuation(length(lightDirection));
                     float diffuseLightWeighting = max(dot(normal, lightNormal), 0.0);
                     float specularLightWeighting = pow(max(dot(reflectionDirection, eyeDirection), 0.0), uMaterialShininess);
+
                     //correction for the loss of angle information during reflection of the normal
                     specularLightWeighting *= diffuseLightWeighting;
-
                     lightWeighting = uEmissiveColor + lightAttenuation * uPointLightingColor * (uAmbientColor + specularLightWeighting + diffuseLightWeighting);
 
-                    if(useNightTexture)
-                    {
-                        vec4 lightColor = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t));
-                        vec4 darkColor = texture2D(uSamplerDark, vec2(vTextureCoord.s, vTextureCoord.t));
-
-                        fragmentColor.x = (lightColor.x * diffuseLightWeighting + darkColor.x * (1.0-diffuseLightWeighting));
-                        fragmentColor.y = (lightColor.y * diffuseLightWeighting + darkColor.y * (1.0-diffuseLightWeighting));
-                        fragmentColor.z = (lightColor.z * diffuseLightWeighting + darkColor.z * (1.0-diffuseLightWeighting));
-                    }
+                    fragmentColor = textureDarkSideOfPlanet(fragmentColor, diffuseLightWeighting);
                 }
 
-                if (useAtomosphere)
-                {
-                    vec2 tex = vec2(vTextureCoord.x + uAtomosphereRotation, vTextureCoord.y);
-                    vec4 atomosphere = texture2D(uSamplerAtomosphere, vec2(tex.s, tex.t));
-
-                    gl_FragColor = vec4(atomosphere.a) * atomosphere + vec4(1.0 - atomosphere.a) * fragmentColor;
-                    gl_FragColor = vec4(gl_FragColor.rgb * lightWeighting, gl_FragColor.a * uAlpha);
-                }
-                else
-                {
-                    gl_FragColor = vec4(fragmentColor.rgb * lightWeighting, fragmentColor.a * uAlpha);
-                }
+                fragmentColor = textureAtmosphere(fragmentColor);
+                gl_FragColor = vec4(fragmentColor.rgb * lightWeighting, fragmentColor.a * uAlpha);
             }
         </script>
 

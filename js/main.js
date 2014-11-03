@@ -54,10 +54,11 @@ function webGlStart()
     earth = new CelestialBody({
         "shader": planetShader,
         "texture": textureLoader.textures.earth,
-        "textureDark": textureLoader.textures.earthDark,
-        "textureAtomosphere": textureLoader.textures.earthAtomosphere,
         "useDarkTexture": true,
-        "useAtomosphere": true,
+        "textureDark": textureLoader.textures.earthDark,
+        "useAtmosphere": true,
+        "textureAtmosphere": textureLoader.textures.earthAtmosphere,
+        "atmosphereRotationSpeed": 0.005,
         "dimensions": {
             "latitude": 30,
             "longitude": 30,
