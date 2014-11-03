@@ -58,6 +58,9 @@ ShaderProgram.prototype.setUniforms = function(params)
 
     gl.uniform3fv(this.ambientColorUniform, params.lightingParameters.ambientColor);
 
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(params.texture.texType, params.texture);
+    gl.uniform1i(this.samplerUniform, 0);
 };
 
 function BasicShader(vertexShaderName, fragmentShaderName)
@@ -102,6 +105,7 @@ CelestialBodyShader.prototype.init = function()
 CelestialBodyShader.prototype.setUniforms = function(params)
 {
     ShaderProgram.prototype.setUniforms.call(this, params);
+
     gl.uniform1i(this.shaderProgram.noDirectionalLight, params.noDirectionalLight);
 
     if(params.lightingParameters.isLightSource)
@@ -123,6 +127,14 @@ CelestialBodyShader.prototype.setUniforms = function(params)
     gl.uniform1f(this.linearLightAttenuation, 0.0001);
     gl.uniform1f(this.quadraticLightAttenuation, 0.00001);
 
+    gl.uniform1i(this.useDarkTexture, params.useDarkTexture);
+
+    if(params.useDarkTexture)
+    {
+        gl.activeTexture(gl.TEXTURE1);
+        gl.bindTexture(params.textureDark.texType, params.textureDark);
+        gl.uniform1i(this.samplerDarkUniform, 1);
+    }
 };
 
 extend(ShaderProgram, CelestialBodyShader);

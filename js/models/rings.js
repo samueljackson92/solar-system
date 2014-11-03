@@ -16,7 +16,9 @@ Rings.prototype.draw = function(modelViewMatrix)
             "lightingPosition": [0,0,0],
             "alpha": 0.8,
             "ambientColor": vec3.fromValues(1.0,1.0,1.0),
-        }
+        },
+        "texture": this.texture,
+        "useDarkTexture": false
     });
 
     Drawable.prototype.draw.call(this, this.shaderProgram);
