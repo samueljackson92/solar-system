@@ -62,6 +62,7 @@
             uniform float uConstantLightAttenuation;
             uniform float uLinearLightAttenuation;
             uniform float uQuadraticLightAttenuation;
+            uniform float uAtomosphereRotation;
 
             uniform vec3 uPointLightingLocation;
             uniform vec3 uPointLightingColor;
@@ -69,9 +70,11 @@
             uniform float uMaterialShininess;
             uniform bool uNoDirectionalLight;
 
-            uniform bool useNightTexture;
             uniform sampler2D uSampler;
+            uniform bool useNightTexture;
             uniform sampler2D uSamplerDark;
+            uniform bool useAtomosphere;
+            uniform sampler2D uSamplerAtomosphere;
 
             //calculate light attenuation from a light source
             float calculateLightAttentuation(float r)
@@ -112,7 +115,18 @@
                     }
                 }
 
-                gl_FragColor = vec4(fragmentColor.rgb * lightWeighting, fragmentColor.a * uAlpha);
+                if (useAtomosphere)
+                {
+                    vec2 tex = vec2(vTextureCoord.x + uAtomosphereRotation, vTextureCoord.y);
+                    vec4 atomosphere = texture2D(uSamplerAtomosphere, vec2(tex.s, tex.t));
+
+                    gl_FragColor = vec4(atomosphere.a) * atomosphere + vec4(1.0 - atomosphere.a) * fragmentColor;
+                    gl_FragColor = vec4(gl_FragColor.rgb * lightWeighting, gl_FragColor.a * uAlpha);
+                }
+                else
+                {
+                    gl_FragColor = vec4(fragmentColor.rgb * lightWeighting, fragmentColor.a * uAlpha);
+                }
             }
         </script>
 

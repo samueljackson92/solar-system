@@ -4,6 +4,11 @@ function CelestialBody(creationParams)
 
     this.useDarkTexture = creationParams.useDarkTexture;
     this.textureDark = creationParams.textureDark;
+
+    this.useAtomosphere = creationParams.useAtomosphere;
+    this.textureAtomosphere = creationParams.textureAtomosphere;
+
+    this.atomosphereTheta = 0;
     this.rotation = vec3.fromValues(0,0,0);
     this.rotationSpeed = vec3.fromValues(0,0,0);
     this.axisTilt = 0;
@@ -61,7 +66,10 @@ CelestialBody.prototype.draw = function(modelViewMatrix)
         },
         "texture": this.texture,
         "useDarkTexture": this.useDarkTexture,
-        "textureDark": this.textureDark
+        "textureDark": this.textureDark,
+        "useAtomosphere": this.useAtomosphere,
+        "textureAtomosphere": this.textureAtomosphere,
+        "atomosphereRotation": this.atomosphereTheta
     });
 
 
@@ -74,6 +82,8 @@ CelestialBody.prototype.animate = function(delta)
     vec3.scale(deltaRotation, this.rotationSpeed, delta / 1000.0);
     vec3.scale(deltaRotation, deltaRotation,  Math.PI / 180);
     vec3.add(this.rotation, this.rotation, deltaRotation);
+
+    this.atomosphereTheta += 0.0005;
 
     this.animateOrbit(delta);
 }

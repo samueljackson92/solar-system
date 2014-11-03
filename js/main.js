@@ -55,7 +55,9 @@ function webGlStart()
         "shader": planetShader,
         "texture": textureLoader.textures.earth,
         "textureDark": textureLoader.textures.earthDark,
+        "textureAtomosphere": textureLoader.textures.earthAtomosphere,
         "useDarkTexture": true,
+        "useAtomosphere": true,
         "dimensions": {
             "latitude": 30,
             "longitude": 30,
@@ -64,7 +66,7 @@ function webGlStart()
     });
 
     earth.setRotation({
-        "speed": [0,100,0],
+        "speed": [0,25,0],
         "tilt": -23
     });
 

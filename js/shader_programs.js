@@ -82,6 +82,10 @@ CelestialBodyShader.prototype.init = function()
     this.useDarkTexture = gl.getUniformLocation(this.shaderProgram, "useNightTexture");
     this.samplerDarkUniform = gl.getUniformLocation(this.shaderProgram, "uSamplerDark");
 
+    this.useAtomosphere = gl.getUniformLocation(this.shaderProgram, "useAtomosphere");
+    this.sampleAtomosphereUniform = gl.getUniformLocation(this.shaderProgram, "uSamplerAtomosphere");
+    this.atomosphereRotation = gl.getUniformLocation(this.shaderProgram, "uAtomosphereRotation");
+
     this.alphaUniform = gl.getUniformLocation(this.shaderProgram, "uAlpha");
 
     //general lighting parameters
@@ -127,6 +131,8 @@ CelestialBodyShader.prototype.setUniforms = function(params)
     gl.uniform1f(this.linearLightAttenuation, 0.0001);
     gl.uniform1f(this.quadraticLightAttenuation, 0.00001);
 
+    gl.uniform1f(this.atomosphereRotation, params.atomosphereRotation);
+
     gl.uniform1i(this.useDarkTexture, params.useDarkTexture);
 
     if(params.useDarkTexture)
@@ -134,6 +140,14 @@ CelestialBodyShader.prototype.setUniforms = function(params)
         gl.activeTexture(gl.TEXTURE1);
         gl.bindTexture(params.textureDark.texType, params.textureDark);
         gl.uniform1i(this.samplerDarkUniform, 1);
+    }
+
+    gl.uniform1i(this.useAtomosphere, params.useAtomosphere);
+    if(params.useAtomosphere)
+    {
+        gl.activeTexture(gl.TEXTURE2);
+        gl.bindTexture(params.textureAtomosphere.texType, params.textureAtomosphere);
+        gl.uniform1i(this.sampleAtomosphereUniform, 2);
     }
 };
 
