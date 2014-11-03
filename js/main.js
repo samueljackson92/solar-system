@@ -84,6 +84,7 @@ function webGlStart()
     moon = new CelestialBody({
         "shader": planetShader,
         "texture": textureLoader.textures.moon,
+        "bumpMap": textureLoader.textures.moonBumpMap,
         "dimensions": {
             "latitude": 30,
             "longitude": 30,
