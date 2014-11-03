@@ -4,7 +4,7 @@ function TextureLoader()
     this.imageDirectory = "img/";
     this.textureFileNames = {
         "earth": "earthmap1k.jpg",
-        "earthDark": "earth_nightmap.jpg",
+        "earthDark": "earth_night_8k.jpg",
         "earthAtomosphere": "fair_clouds_4k.png",
         "jupiter": "jupitermap.jpg",
         "mars": "marsmap1k.jpg",
