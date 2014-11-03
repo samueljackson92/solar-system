@@ -59,23 +59,13 @@ CelestialBody.prototype.draw = function(modelViewMatrix)
             "alpha": 1.0,
             "ambientColor": vec3.fromValues(0.2,0.2,0.2),
         },
+        "texture": this.texture,
+        "useDarkTexture": this.useDarkTexture,
+        "textureDark": this.textureDark
     });
 
 
-    gl.uniform1i(this.shaderProgram.useDarkTexture, this.useDarkTexture);
-
-    if(this.useDarkTexture)
-    {
-        gl.activeTexture(gl.TEXTURE1);
-        gl.bindTexture(this.textureDark.texType, this.textureDark);
-        gl.uniform1i(this.shaderProgram.samplerDarkUniform, 1);
-    }
-
-
-
     Drawable.prototype.draw.call(this, this.shaderProgram);
-
-    gl.bindTexture(this.texture.texType, null);
 }
 
 CelestialBody.prototype.animate = function(delta)

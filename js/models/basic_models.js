@@ -36,9 +36,9 @@ Drawable.prototype.setPositionVector = function(position)
 Drawable.prototype.draw= function(shaderProgram)
 {
     //texture
-    gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(this.texture.texType, this.texture);
-    gl.uniform1i(shaderProgram.samplerUniform, 0);
+    // gl.activeTexture(gl.TEXTURE0);
+    // gl.bindTexture(this.texture.texType, this.texture);
+    // gl.uniform1i(shaderProgram.samplerUniform, 0);
 
     bindBufferToShader(this.vertexPositionBuffer, shaderProgram.vertexPositionAttribute);
     bindBufferToShader(this.vertexTextureCoordinateBuffer, shaderProgram.textureCoordAttribute);
