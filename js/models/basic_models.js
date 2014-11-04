@@ -9,7 +9,7 @@ function Drawable(creationParams)
         this.shaderUniforms.lightingParameters = {};
     }
 
-    if(this.shaderUniforms.lightingParameters === undefined)
+    if(this.shaderUniforms.textures === undefined)
     {
         this.shaderUniforms.textures = {};
     }

@@ -11,9 +11,6 @@ SkyBox.prototype.draw = function(modelViewMatrix)
     this.shaderUniforms.modelViewMatrix = modelViewMatrix;
     this.shaderUniforms.perspectiveMatrix = perspectiveMatrix;
 
-    this.shaderUniforms.lightingParameters = {};
-    this.shaderUniforms.lightingParameters.ambientColor = vec3.fromValues(0.5,0.5,0.5);
-
     this.shaderProgram.setUniforms(this.shaderUniforms);
     Drawable.prototype.draw.call(this, this.shaderProgram);
 }

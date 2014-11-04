@@ -1,5 +1,6 @@
-function ShaderProgram(vertexShaderName, fragmentShaderName)
+function ShaderProgram(vertexShaderName, fragmentShaderName, globalUniforms)
 {
+    this.globalUniforms = globalUniforms;
     this.shaderProgram = this.loadShaders(vertexShaderName, fragmentShaderName);
 }
 
@@ -59,20 +60,20 @@ ShaderProgram.prototype.setUniforms = function(uniforms)
     gl.uniform3fv(this.ambientColorUniform, uniforms.lightingParameters.ambientColor);
 
     gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(uniforms.texture.texType, uniforms.texture);
+    gl.bindTexture(uniforms.textures.texture.texType, uniforms.textures.texture);
     gl.uniform1i(this.samplerUniform, 0);
 };
 
-function BasicShader(vertexShaderName, fragmentShaderName)
+function BasicShader(vertexShaderName, fragmentShaderName, globalUniforms)
 {
-    ShaderProgram.call(this, vertexShaderName, fragmentShaderName);
+    ShaderProgram.call(this, vertexShaderName, fragmentShaderName, globalUniforms);
 }
 
 extend(ShaderProgram, BasicShader);
 
-function CelestialBodyShader(vertexShaderName, fragmentShaderName)
+function CelestialBodyShader(vertexShaderName, fragmentShaderName, globalUniforms)
 {
-    ShaderProgram.call(this, vertexShaderName, fragmentShaderName);
+    ShaderProgram.call(this, vertexShaderName, fragmentShaderName, globalUniforms);
 }
 
 CelestialBodyShader.prototype.init = function()
@@ -110,42 +111,42 @@ CelestialBodyShader.prototype.setUniforms = function(uniforms)
 {
     ShaderProgram.prototype.setUniforms.call(this, uniforms);
 
-    gl.uniform1i(this.shaderProgram.noDirectionalLight, uniforms.noDirectionalLight);
+    //we only have one light source for now.
+    gl.uniform3fv(this.pointLightingLocationUniform, this.globalUniforms.pointLightLocation);
+    gl.uniform3fv(this.pointLightingColorUniform, this.globalUniforms.pointLightColor);
+    gl.uniform1f(this.materialShininess, this.globalUniforms.materialShininess);
+    //light attentuation factors
+    gl.uniform1f(this.constantLightAttenuation, this.globalUniforms.lightAttenuation.constant);
+    gl.uniform1f(this.linearLightAttenuation, this.globalUniforms.lightAttenuation.linear);
+    gl.uniform1f(this.quadraticLightAttenuation, this.globalUniforms.lightAttenuation.quadratic);
 
     if(uniforms.isLightSource)
     {
-        gl.uniform3f(this.emissiveColorUniform, 1.0, 1.0, 1.0);
+        gl.uniform3fv(this.emissiveColorUniform, this.globalUniforms.emissiveColor);
     }
     else
     {
         gl.uniform3f(this.emissiveColorUniform, 0,0,0);
     }
 
-    gl.uniform3fv(this.pointLightingLocationUniform, uniforms.lightingParameters.lightingPosition);
+    gl.uniform1i(this.shaderProgram.noDirectionalLight, uniforms.noDirectionalLight);
     gl.uniform1f(this.alphaUniform, uniforms.lightingParameters.alpha);
-    gl.uniform3f(this.pointLightingColorUniform, 1.0, 1.0, 1.0);
-    gl.uniform1f(this.materialShininess, 3.0);
-
-    //light attentuation factors
-    gl.uniform1f(this.constantLightAttenuation, 0.0001);
-    gl.uniform1f(this.linearLightAttenuation, 0.0001);
-    gl.uniform1f(this.quadraticLightAttenuation, 0.00001);
 
     //setup sampler for night side texture
-    gl.uniform1i(this.useDarkTexture, uniforms.useDarkTexture);
-    if(uniforms.useDarkTexture)
+    gl.uniform1i(this.useDarkTexture, uniforms.textures.useDarkTexture);
+    if(uniforms.textures.useDarkTexture)
     {
         gl.activeTexture(gl.TEXTURE1);
-        gl.bindTexture(uniforms.textureDark.texType, uniforms.textureDark);
+        gl.bindTexture(uniforms.textures.textureDark.texType, uniforms.textures.textureDark);
         gl.uniform1i(this.samplerDarkUniform, 1);
     }
 
     //setup sampler for atmosphere texture
-    gl.uniform1i(this.useAtmosphere, uniforms.useAtmosphere);
-    if(uniforms.useAtmosphere)
+    gl.uniform1i(this.useAtmosphere, uniforms.textures.useAtmosphere);
+    if(uniforms.textures.useAtmosphere)
     {
         gl.activeTexture(gl.TEXTURE2);
-        gl.bindTexture(uniforms.textureAtmosphere.texType, uniforms.textureAtmosphere);
+        gl.bindTexture(uniforms.textures.textureAtmosphere.texType, uniforms.textures.textureAtmosphere);
         gl.uniform1i(this.sampleAtmosphereUniform, 2);
         gl.uniform1f(this.atmosphereRotation, uniforms.atmosphereRotation);
     }

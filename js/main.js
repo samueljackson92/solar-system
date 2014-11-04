@@ -31,14 +31,26 @@ function webGlStart()
         keyController.handleKeyUp(event);
     };
 
-    var planetShader = new CelestialBodyShader("shader-vs", 'shader-fs');
+    var planetShader = new CelestialBodyShader("shader-vs", 'shader-fs', {
+        "pointLightLocation": vec3.fromValues(0.0,0.0,0.0),
+        "pointLightColor": vec3.fromValues(1.0,1.0,1.0),
+        "materialShininess": 3.0,
+        "lightAttenuation": {
+            "constant": 0.00001,
+            "linear": 0.00001,
+            "quadratic": 0.00001,
+        },
+        "emissiveColor": vec3.fromValues(1.0,1.0,1.0)
+    });
+
     planetShader.init();
 
     sol = new CelestialBody({
         "shader": planetShader,
         "shaderUniforms": {
-            "texture": textureLoader.textures.sun,
-            "useDarkTexture": false,
+            "textures": {
+                "texture": textureLoader.textures.sun,
+            },
             "isLightSource": true
         },
         "dimensions": {
@@ -56,11 +68,13 @@ function webGlStart()
     earth = new CelestialBody({
         "shader": planetShader,
         "shaderUniforms": {
-            "texture": textureLoader.textures.earth,
-            "useDarkTexture": true,
-            "textureDark": textureLoader.textures.earthDark,
-            "useAtmosphere": true,
-            "textureAtmosphere": textureLoader.textures.earthAtmosphere,
+            "textures": {
+                "texture": textureLoader.textures.earth,
+                "useDarkTexture": true,
+                "textureDark": textureLoader.textures.earthDark,
+                "useAtmosphere": true,
+                "textureAtmosphere": textureLoader.textures.earthAtmosphere,
+            }
         },
         "atmosphereRotationSpeed": 0.005,
         "dimensions": {
@@ -88,7 +102,10 @@ function webGlStart()
     moon = new CelestialBody({
         "shader": planetShader,
         "shaderUniforms": {
-            "texture": textureLoader.textures.moon,
+            "textures":
+            {
+                "texture": textureLoader.textures.moon,
+            }
         },
         "dimensions": {
             "latitude": 30,
@@ -115,7 +132,9 @@ function webGlStart()
     saturn = new CelestialBody({
         "shader": planetShader,
         "shaderUniforms": {
-            "texture": textureLoader.textures.saturn,
+            "textures":{
+                "texture": textureLoader.textures.saturn,
+            },
         },
         "dimensions": {
             "latitude": 30,
@@ -136,7 +155,13 @@ function webGlStart()
     rings = new Rings({
         "shader": planetShader,
         "shaderUniforms": {
-            "texture": textureLoader.textures.saturnsRings,
+            "textures": {
+                "texture": textureLoader.textures.saturnsRings
+            },
+            "lightingParameters": {
+                "ambientColor": vec3.fromValues(1.0,1.0,1.0),
+                "alpha": 0.8
+            }
         },
         "isBlended": true
     });
@@ -152,7 +177,12 @@ function webGlStart()
     skyBox = new SkyBox({
         "shader": skyBoxShader,
         "shaderUniforms": {
-            "texture": textureLoader.textures.skybox
+            "textures": {
+                "texture": textureLoader.textures.skybox,
+            },
+            "lightingParameters": {
+                "ambientColor": vec3.fromValues(0.5,0.5,0.5),
+            }
         }
     });
 

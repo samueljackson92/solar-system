@@ -11,11 +11,6 @@ Rings.prototype.draw = function(modelViewMatrix)
     this.shaderUniforms.modelViewMatrix = modelViewMatrix;
     this.shaderUniforms.perspectiveMatrix = perspectiveMatrix;
 
-    this.shaderUniforms.lightingParameters = {};
-    this.shaderUniforms.lightingParameters.ambientColor = vec3.fromValues(1.0,1.0,1.0);
-    this.shaderUniforms.lightingParameters.lightingPosition = vec3.fromValues(0.0,0.0,0.0); //we only have one light source
-    this.shaderUniforms.lightingParameters.alpha = 0.8;
-
     this.shaderProgram.setUniforms(this.shaderUniforms);
     Drawable.prototype.draw.call(this, this.shaderProgram);
 }
