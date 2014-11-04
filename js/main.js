@@ -36,14 +36,16 @@ function webGlStart()
 
     sol = new CelestialBody({
         "shader": planetShader,
-        "texture": textureLoader.textures.sun,
-        "useDarkTexture": false,
+        "shaderUniforms": {
+            "texture": textureLoader.textures.sun,
+            "useDarkTexture": false,
+            "isLightSource": true
+        },
         "dimensions": {
             "latitude": 60,
             "longitude": 60,
             "radius": 50,
         },
-        "isLightSource": true
     });
 
     sol.setRotation({
@@ -53,11 +55,13 @@ function webGlStart()
 
     earth = new CelestialBody({
         "shader": planetShader,
-        "texture": textureLoader.textures.earth,
-        "useDarkTexture": true,
-        "textureDark": textureLoader.textures.earthDark,
-        "useAtmosphere": true,
-        "textureAtmosphere": textureLoader.textures.earthAtmosphere,
+        "shaderUniforms": {
+            "texture": textureLoader.textures.earth,
+            "useDarkTexture": true,
+            "textureDark": textureLoader.textures.earthDark,
+            "useAtmosphere": true,
+            "textureAtmosphere": textureLoader.textures.earthAtmosphere,
+        },
         "atmosphereRotationSpeed": 0.005,
         "dimensions": {
             "latitude": 30,
@@ -83,7 +87,9 @@ function webGlStart()
 
     moon = new CelestialBody({
         "shader": planetShader,
-        "texture": textureLoader.textures.moon,
+        "shaderUniforms": {
+            "texture": textureLoader.textures.moon,
+        },
         "dimensions": {
             "latitude": 30,
             "longitude": 30,
@@ -108,7 +114,9 @@ function webGlStart()
 
     saturn = new CelestialBody({
         "shader": planetShader,
-        "texture": textureLoader.textures.saturn,
+        "shaderUniforms": {
+            "texture": textureLoader.textures.saturn,
+        },
         "dimensions": {
             "latitude": 30,
             "longitude": 30,
@@ -126,8 +134,10 @@ function webGlStart()
 
 
     rings = new Rings({
-        "texture": textureLoader.textures.saturnsRings,
         "shader": planetShader,
+        "shaderUniforms": {
+            "texture": textureLoader.textures.saturnsRings,
+        },
         "isBlended": true
     });
 
@@ -140,9 +150,12 @@ function webGlStart()
     skyBoxShader.init();
 
     skyBox = new SkyBox({
-        "texture": textureLoader.textures.skybox,
-        "shader": skyBoxShader
+        "shader": skyBoxShader,
+        "shaderUniforms": {
+            "texture": textureLoader.textures.skybox
+        }
     });
+
     solarSystem.addDrawableObject(skyBox);
 
     solarSystem.initBuffers();

@@ -8,19 +8,13 @@ SkyBox.prototype.draw = function(modelViewMatrix)
     mat4.translate(modelViewMatrix, modelViewMatrix, this.positionVector);
     mat4.scale(modelViewMatrix, modelViewMatrix, [10000,10000,10000]);
 
-    this.shaderProgram.setUniforms({
-        "modelViewMatrix": modelViewMatrix,
-        "perspectiveMatrix": perspectiveMatrix,
-        "lightingParameters": {
-            "isLightSource": this.isLightSource,
-            "lightingPosition": [0,0,0],
-            "alpha": 1.0,
-            "ambientColor": vec3.fromValues(0.5,0.5,0.5),
-        },
-        "texture": this.texture,
-        "useDarkTexture": false
-    });
+    this.shaderUniforms.modelViewMatrix = modelViewMatrix;
+    this.shaderUniforms.perspectiveMatrix = perspectiveMatrix;
 
+    this.shaderUniforms.lightingParameters = {};
+    this.shaderUniforms.lightingParameters.ambientColor = vec3.fromValues(0.5,0.5,0.5);
+
+    this.shaderProgram.setUniforms(this.shaderUniforms);
     Drawable.prototype.draw.call(this, this.shaderProgram);
 }
 

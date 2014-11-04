@@ -46,20 +46,20 @@ ShaderProgram.prototype.init = function()
     this.ambientColorUniform = gl.getUniformLocation(this.shaderProgram, "uAmbientColor");
 };
 
-ShaderProgram.prototype.setUniforms = function(params)
+ShaderProgram.prototype.setUniforms = function(uniforms)
 {
     gl.useProgram(this.shaderProgram);
-    gl.uniformMatrix4fv(this.pMatrixUniform, false, params.perspectiveMatrix);
-    gl.uniformMatrix4fv(this.mvMatrixUniform, false, params.modelViewMatrix);
+    gl.uniformMatrix4fv(this.pMatrixUniform, false, uniforms.perspectiveMatrix);
+    gl.uniformMatrix4fv(this.mvMatrixUniform, false, uniforms.modelViewMatrix);
 
     var normalMatrix = mat3.create();
-    mat3.normalFromMat4(normalMatrix, params.modelViewMatrix);
+    mat3.normalFromMat4(normalMatrix, uniforms.modelViewMatrix);
     gl.uniformMatrix3fv(this.nMatrixUniform, false, normalMatrix);
 
-    gl.uniform3fv(this.ambientColorUniform, params.lightingParameters.ambientColor);
+    gl.uniform3fv(this.ambientColorUniform, uniforms.lightingParameters.ambientColor);
 
     gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(params.texture.texType, params.texture);
+    gl.bindTexture(uniforms.texture.texType, uniforms.texture);
     gl.uniform1i(this.samplerUniform, 0);
 };
 
@@ -106,13 +106,13 @@ CelestialBodyShader.prototype.init = function()
     this.nonDirectionalAmbientLighting = gl.getUniformLocation(this.shaderProgram, "uNonDirectionalAmbientLighting");
 };
 
-CelestialBodyShader.prototype.setUniforms = function(params)
+CelestialBodyShader.prototype.setUniforms = function(uniforms)
 {
-    ShaderProgram.prototype.setUniforms.call(this, params);
+    ShaderProgram.prototype.setUniforms.call(this, uniforms);
 
-    gl.uniform1i(this.shaderProgram.noDirectionalLight, params.noDirectionalLight);
+    gl.uniform1i(this.shaderProgram.noDirectionalLight, uniforms.noDirectionalLight);
 
-    if(params.lightingParameters.isLightSource)
+    if(uniforms.isLightSource)
     {
         gl.uniform3f(this.emissiveColorUniform, 1.0, 1.0, 1.0);
     }
@@ -121,8 +121,8 @@ CelestialBodyShader.prototype.setUniforms = function(params)
         gl.uniform3f(this.emissiveColorUniform, 0,0,0);
     }
 
-    gl.uniform3fv(this.pointLightingLocationUniform, params.lightingParameters.lightingPosition);
-    gl.uniform1f(this.alphaUniform, params.lightingParameters.alpha);
+    gl.uniform3fv(this.pointLightingLocationUniform, uniforms.lightingParameters.lightingPosition);
+    gl.uniform1f(this.alphaUniform, uniforms.lightingParameters.alpha);
     gl.uniform3f(this.pointLightingColorUniform, 1.0, 1.0, 1.0);
     gl.uniform1f(this.materialShininess, 3.0);
 
@@ -132,22 +132,22 @@ CelestialBodyShader.prototype.setUniforms = function(params)
     gl.uniform1f(this.quadraticLightAttenuation, 0.00001);
 
     //setup sampler for night side texture
-    gl.uniform1i(this.useDarkTexture, params.useDarkTexture);
-    if(params.useDarkTexture)
+    gl.uniform1i(this.useDarkTexture, uniforms.useDarkTexture);
+    if(uniforms.useDarkTexture)
     {
         gl.activeTexture(gl.TEXTURE1);
-        gl.bindTexture(params.textureDark.texType, params.textureDark);
+        gl.bindTexture(uniforms.textureDark.texType, uniforms.textureDark);
         gl.uniform1i(this.samplerDarkUniform, 1);
     }
 
     //setup sampler for atmosphere texture
-    gl.uniform1i(this.useAtmosphere, params.useAtmosphere);
-    if(params.useAtmosphere)
+    gl.uniform1i(this.useAtmosphere, uniforms.useAtmosphere);
+    if(uniforms.useAtmosphere)
     {
         gl.activeTexture(gl.TEXTURE2);
-        gl.bindTexture(params.textureAtmosphere.texType, params.textureAtmosphere);
+        gl.bindTexture(uniforms.textureAtmosphere.texType, uniforms.textureAtmosphere);
         gl.uniform1i(this.sampleAtmosphereUniform, 2);
-        gl.uniform1f(this.atmosphereRotation, params.atmosphereRotation);
+        gl.uniform1f(this.atmosphereRotation, uniforms.atmosphereRotation);
     }
 };
 
