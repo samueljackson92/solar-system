@@ -2,13 +2,7 @@ function CelestialBody(creationParams)
 {
     Sphere.call(this, creationParams);
 
-    this.useDarkTexture = creationParams.useDarkTexture;
-    this.textureDark = creationParams.textureDark;
-
-    this.useAtmosphere = creationParams.useAtmosphere;
-    this.textureAtmosphere = creationParams.textureAtmosphere;
     this.atmosphereRotationSpeed = creationParams.atmosphereRotationSpeed;
-
     this.atmosphereTheta = 0;
     this.rotation = vec3.fromValues(0,0,0);
     this.rotationSpeed = vec3.fromValues(0,0,0);
@@ -56,24 +50,15 @@ CelestialBody.prototype.draw = function(modelViewMatrix)
     mat4.rotateY(modelViewMatrix, modelViewMatrix, this.rotation[1]);
     mat4.rotateZ(modelViewMatrix, modelViewMatrix, this.rotation[2]);
 
-    this.shaderProgram.setUniforms({
-        "modelViewMatrix": modelViewMatrix,
-        "perspectiveMatrix": perspectiveMatrix,
-        "lightingParameters": {
-            "isLightSource": this.isLightSource,
-            "lightingPosition": [0,0,0],
-            "alpha": 1.0,
-            "ambientColor": vec3.fromValues(0.2,0.2,0.2),
-        },
-        "texture": this.texture,
-        "useDarkTexture": this.useDarkTexture,
-        "textureDark": this.textureDark,
-        "useAtmosphere": this.useAtmosphere,
-        "textureAtmosphere": this.textureAtmosphere,
-        "atmosphereRotation": this.atmosphereTheta
-    });
+    this.shaderUniforms.modelViewMatrix = modelViewMatrix;
+    this.shaderUniforms.perspectiveMatrix = perspectiveMatrix;
+    this.shaderUniforms.atmosphereRotation = this.atmosphereTheta;
 
+    this.shaderUniforms.lightingParameters.ambientColor = vec3.fromValues(0.2,0.2,0.2);
+    this.shaderUniforms.lightingParameters.lightingPosition = vec3.fromValues(0.0,0.0,0.0); //we only have one light source
+    this.shaderUniforms.lightingParameters.alpha = 1.0;
 
+    this.shaderProgram.setUniforms(this.shaderUniforms);
     Drawable.prototype.draw.call(this, this.shaderProgram);
 }
 

@@ -2,7 +2,17 @@ function Drawable(creationParams)
 {
     //texture object defining look of the body
     this.shaderProgram = creationParams.shader;
-    this.texture = creationParams.texture;
+    this.shaderUniforms = creationParams.shaderUniforms;
+
+    if(this.shaderUniforms.lightingParameters === undefined)
+    {
+        this.shaderUniforms.lightingParameters = {};
+    }
+
+    if(this.shaderUniforms.textures === undefined)
+    {
+        this.shaderUniforms.textures = {};
+    }
 
     // data arrays for vertices, normals etc.
     this.vertexPositionData = [];
@@ -16,7 +26,6 @@ function Drawable(creationParams)
     this.vertexIndexBuffer = null;
 
     this.positionVector = vec3.fromValues(0,0,0);
-    this.isLightSource = (creationParams.isLightSource !== undefined && creationParams.isLightSource !== false);
     this.isBlended = (creationParams.isBlended !== undefined && creationParams.isBlended !== false);
 }
 
@@ -35,19 +44,12 @@ Drawable.prototype.setPositionVector = function(position)
 
 Drawable.prototype.draw= function(shaderProgram)
 {
-    //texture
-    // gl.activeTexture(gl.TEXTURE0);
-    // gl.bindTexture(this.texture.texType, this.texture);
-    // gl.uniform1i(shaderProgram.samplerUniform, 0);
-
     bindBufferToShader(this.vertexPositionBuffer, shaderProgram.vertexPositionAttribute);
     bindBufferToShader(this.vertexTextureCoordinateBuffer, shaderProgram.textureCoordAttribute);
     bindBufferToShader(this.vertexNormalBuffer, shaderProgram.vertexNormalAttribute);
 
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.vertexIndexBuffer);
     gl.drawElements(gl.TRIANGLES, this.vertexIndexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
-
-    gl.bindTexture(this.texture.texType, null);
 }
 
 
