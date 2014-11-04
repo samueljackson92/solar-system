@@ -59,6 +59,10 @@ CelestialBody.prototype.draw = function(modelViewMatrix)
     this.shaderUniforms.lightingParameters.alpha = 1.0;
 
     this.shaderProgram.setUniforms(this.shaderUniforms);
+
+    bindBufferToShader(this.vertexTangentBuffer, this.shaderProgram.vertexTangentAttribute);
+    bindBufferToShader(this.vertexBitangentBuffer, this.shaderProgram.vertexBitangentAttribute);
+
     Drawable.prototype.draw.call(this, this.shaderProgram);
 }
 

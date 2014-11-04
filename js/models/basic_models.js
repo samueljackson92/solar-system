@@ -187,6 +187,12 @@ function Sphere(creationParams)
 {
     Drawable.call(this, creationParams);
 
+    this.vertexTangentData = [];
+    this.vertexBitangentData = [];
+
+    this.vertexTangentBuffer = null;
+    this.vertexBitangentBuffer = null;
+
     var latitudeBands = creationParams.dimensions.latitude;
     var longitudeBands = creationParams.dimensions.longitude;
     var radius = creationParams.dimensions.radius;
@@ -238,6 +244,68 @@ function Sphere(creationParams)
       }
     }
 
+    this.computeTangentVectors();
 }
+
+Sphere.prototype.initBuffers = function()
+{
+    Drawable.prototype.initBuffers.call(this);
+
+    this.vertexTangentBuffer = createArrayBuffer(this.vertexTangentData, 3);
+    this.vertexBitangentBuffer = createArrayBuffer(this.vertexBitangentData, 3);
+}
+
+Sphere.prototype.extractVector = function(index)
+{
+    var v0 = this.vertexPositionData[index];
+    var v1 = this.vertexPositionData[index+1];
+    var v2 = this.vertexPositionData[index+2];
+    return vec3.fromValues(v0,v1,v2);
+}
+
+Sphere.prototype.computeTangentVectors = function()
+{
+    for (var i = 0; i < this.normalData.length; i += 3) {
+
+        var v0 = this.extractVector(i);
+        var v1 = this.extractVector(i+1);
+        var v2 = this.extractVector(i+2);
+
+        var edge1 = vec3.create();
+        var edge2 = vec3.create();
+
+        vec3.subtract(edge1, v1, v0);
+        vec3.subtract(edge2, v2, v0);
+
+        var deltaU1 = v1[0] - v0[0];
+        var deltaV1 = v1[1] - v0[1];
+
+        var deltaU2 = v2[0] - v0[0];
+        var deltaV2 = v2[1] - v0[1];
+
+        var f = 1.0 / (deltaU1 * deltaV2 - deltaU2 * deltaV1);
+
+        var tangent = vec3.create();
+        var bitangent = vec3.create();
+
+        tangent[0] = f * (deltaV2 * edge1[0] - deltaV1 * edge2[0]);
+        tangent[1] = f * (deltaV2 * edge1[1] - deltaV1 * edge2[1]);
+        tangent[2] = f * (deltaV2 * edge1[2] - deltaV1 * edge2[2]);
+
+        bitangent[0] = f * (-deltaU2 * edge1[0] - deltaU1 * edge2[0]);
+        bitangent[1] = f * (-deltaU2 * edge1[1] - deltaU1 * edge2[1]);
+        bitangent[2] = f * (-deltaU2 * edge1[2] - deltaU1 * edge2[2]);
+
+        for (var j=0; j < 3; j++)
+        {
+            this.vertexTangentData.push(tangent[j]);
+            this.vertexBitangentData.push(bitangent[j]);
+        }
+    }
+
+    // console.log(this.indexData.length)
+    console.log(this.normalData.length)
+    console.log(this.vertexTangentData.length)
+};
 
 extend(Drawable, Sphere);

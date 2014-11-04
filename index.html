@@ -54,6 +54,8 @@
             varying vec3 vTransformedNormal;
             varying vec4 vPosition;
 
+            varying mat3 TBN;
+
             //lighting uniforms
             uniform vec3 uAmbientColor;
             uniform vec3 uEmissiveColor;
@@ -73,11 +75,15 @@
 
             //texture sampler uniforms
             uniform sampler2D uSampler;
+
             uniform bool useNightTexture;
             uniform sampler2D uSamplerDark;
+
             uniform bool useAtmosphere;
             uniform sampler2D uSamplerAtmosphere;
 
+            uniform bool useBumpMap;
+            uniform sampler2D uSamplerBumpMap;
             //alpha weight for textures
             uniform float uAlpha;
 
@@ -121,15 +127,30 @@
                 if (uNoDirectionalLight) {
                     lightWeighting = uAmbientColor;
                 } else {
-                    vec3 normal = normalize(vTransformedNormal);
-                    vec3 eyeDirection = normalize(-vPosition.xyz);
-                    vec3 lightDirection = uPointLightingLocation - vPosition.xyz;
-                    vec3 lightNormal = normalize(lightDirection);
-                    vec3 reflectionDirection = reflect(-lightNormal, normal);
+                    vec3 normal_tangentSpace = normalize(texture2D(uSamplerBumpMap, vec2(vTextureCoord.s, vTextureCoord.t)).rgb*2.0 - 1.0);
 
-                    float lightAttenuation = calculateLightAttentuation(length(lightDirection));
-                    float diffuseLightWeighting = max(dot(normal, lightNormal), 0.0);
-                    float specularLightWeighting = pow(max(dot(reflectionDirection, eyeDirection), 0.0), uMaterialShininess);
+                    vec3 lightDirection = uPointLightingLocation - vPosition.xyz;
+                    vec3 eyeDirection = normalize(-vPosition.xyz);
+
+                    vec3 lightDirection_tangentSpace = normalize(TBN * lightDirection);
+                    vec3 eyeDirection_tangentSpace = normalize(TBN * eyeDirection);
+
+                    vec3 lightNormal_tangentSpace = normalize(lightDirection_tangentSpace);
+                    vec3 reflectionDirection_tangentSpace = reflect(-lightNormal_tangentSpace, normal_tangentSpace);
+
+                    float lightAttenuation = calculateLightAttentuation(length(lightDirection_tangentSpace));
+
+
+                    float diffuseLightWeighting = clamp(dot(normal_tangentSpace, lightNormal_tangentSpace), 0.0, 1.0);//max(dot(normal_tangentSpace, lightNormal_tangentSpace), 0.0);
+                    float specularLightWeighting = pow(clamp(dot(reflectionDirection_tangentSpace, eyeDirection_tangentSpace), 0.0, 1.0), uMaterialShininess);
+
+                    // vec3 normal = normalize(vTransformedNormal);
+                    // vec3 lightNormal = normalize(lightDirection);
+                    // vec3 reflectionDirection = reflect(-lightNormal, normal);
+                    //
+                    // float lightAttenuation = calculateLightAttentuation(length(lightDirection));
+                    // float diffuseLightWeighting = max(dot(normal, lightNormal), 0.0);
+                    // float specularLightWeighting = pow(max(dot(reflectionDirection, eyeDirection), 0.0), uMaterialShininess);
 
                     //correction for the loss of angle information during reflection of the normal
                     specularLightWeighting *= diffuseLightWeighting;
@@ -146,8 +167,11 @@
         <!-- vertex shader -->
         <script id="shader-vs" type="x-shader/x-vertex">
             attribute vec3 aVertexPosition;
-            attribute vec3 aVertexNormal;
             attribute vec2 aTextureCoord;
+
+            attribute vec3 aVertexNormal;
+            attribute vec3 aVertexTangent;
+            attribute vec3 aVertexBitangent;
 
             uniform mat4 uMVMatrix;
             uniform mat4 uPMatrix;
@@ -157,11 +181,32 @@
             varying vec3 vTransformedNormal;
             varying vec4 vPosition;
 
+            varying mat3 TBN;
+
+            mat3 transpose(mat3 inMatrix) {
+                vec3 i0 = inMatrix[0];
+                vec3 i1 = inMatrix[1];
+                vec3 i2 = inMatrix[2];
+
+                mat3 outMatrix = mat3(
+                    vec3(i0.x, i1.x, i2.x),
+                    vec3(i0.y, i1.y, i2.y),
+                    vec3(i0.z, i1.z, i2.z)
+                );
+
+                return outMatrix;
+            }
+
             void main(void) {
                 vPosition = uMVMatrix * vec4(aVertexPosition, 1.0);
                 gl_Position = uPMatrix * vPosition;
                 vTextureCoord = aTextureCoord;
                 vTransformedNormal = uNMatrix * aVertexNormal;
+
+                vec3 tangent = uNMatrix * aVertexTangent;
+                vec3 bitangent = uNMatrix * aVertexBitangent;
+
+                TBN = transpose(mat3(tangent, bitangent, vTransformedNormal));
             }
         </script>
         <!-- End of WebGL shaders -->

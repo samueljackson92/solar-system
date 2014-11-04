@@ -50,6 +50,8 @@ function webGlStart()
         "shaderUniforms": {
             "textures": {
                 "texture": textureLoader.textures.sun,
+                "useBumpMap": true,
+                "bumpMap": textureLoader.textures.moonBumpMap
             },
             "isLightSource": true
         },
@@ -91,13 +93,13 @@ function webGlStart()
 
     earth.setOrbit({
         "radius": 250,
-        "velocity": 0.00001,
+        "velocity": 0.0000,
         "eccentricity": 0,
         "axis": 0,
         "tilt": -5
     });
 
-    sol.addChild(earth);
+    // sol.addChild(earth);
 
     moon = new CelestialBody({
         "shader": planetShader,
@@ -105,13 +107,14 @@ function webGlStart()
             "textures":
             {
                 "texture": textureLoader.textures.moon,
+                "useBumpMap": true,
                 "bumpMap": textureLoader.textures.moonBumpMap,
             }
         },
         "dimensions": {
-            "latitude": 30,
-            "longitude": 30,
-            "radius": 1,
+            "latitude": 60,
+            "longitude": 60,
+            "radius": 20,
         }
     });
 
@@ -121,54 +124,56 @@ function webGlStart()
     });
 
     moon.setOrbit({
-        "radius": 10,
-        "velocity": 0.01,
+        "radius": 100,
+        "velocity": 0.0,
         "eccentricity": 0.5,
         "axis": 0,
         "tilt": -45
     });
 
-    earth.addChild(moon);
+    // earth.addChild(moon);
 
-    saturn = new CelestialBody({
-        "shader": planetShader,
-        "shaderUniforms": {
-            "textures":{
-                "texture": textureLoader.textures.saturn,
-            },
-        },
-        "dimensions": {
-            "latitude": 30,
-            "longitude": 30,
-            "radius": 10,
-        }
-    });
-
-    saturn.setOrbit({
-        "radius": 750,
-        "velocity": 0.0,
-        "eccentricity": 0,
-        "axis": 0,
-        "tilt": 0
-    });
-
-
-    rings = new Rings({
-        "shader": planetShader,
-        "shaderUniforms": {
-            "textures": {
-                "texture": textureLoader.textures.saturnsRings
-            },
-            "lightingParameters": {
-                "ambientColor": vec3.fromValues(1.0,1.0,1.0),
-                "alpha": 0.8
-            }
-        },
-        "isBlended": true
-    });
-
-    saturn.addChild(rings);
-    sol.addChild(saturn);
+    sol.addChild(moon);
+    //
+    // saturn = new CelestialBody({
+    //     "shader": planetShader,
+    //     "shaderUniforms": {
+    //         "textures":{
+    //             "texture": textureLoader.textures.saturn,
+    //         },
+    //     },
+    //     "dimensions": {
+    //         "latitude": 30,
+    //         "longitude": 30,
+    //         "radius": 10,
+    //     }
+    // });
+    //
+    // saturn.setOrbit({
+    //     "radius": 750,
+    //     "velocity": 0.0,
+    //     "eccentricity": 0,
+    //     "axis": 0,
+    //     "tilt": 0
+    // });
+    //
+    //
+    // rings = new Rings({
+    //     "shader": planetShader,
+    //     "shaderUniforms": {
+    //         "textures": {
+    //             "texture": textureLoader.textures.saturnsRings
+    //         },
+    //         "lightingParameters": {
+    //             "ambientColor": vec3.fromValues(1.0,1.0,1.0),
+    //             "alpha": 0.8
+    //         }
+    //     },
+    //     "isBlended": true
+    // });
+    //
+    // saturn.addChild(rings);
+    // sol.addChild(saturn);
 
     solarSystem.addDrawableObject(sol);
 

@@ -80,12 +80,21 @@ CelestialBodyShader.prototype.init = function()
 {
     ShaderProgram.prototype.init.call(this);
 
+    this.vertexTangentAttribute = gl.getAttribLocation(this.shaderProgram, 'aVertexTangent');
+    gl.enableVertexAttribArray(this.vertexTangentAttribute);
+
+    this.vertexBitangentAttribute = gl.getAttribLocation(this.shaderProgram, 'aVertexBitangent');
+    gl.enableVertexAttribArray(this.vertexBitangentAttribute);
+
     this.useDarkTexture = gl.getUniformLocation(this.shaderProgram, "useNightTexture");
     this.samplerDarkUniform = gl.getUniformLocation(this.shaderProgram, "uSamplerDark");
 
     this.useAtmosphere = gl.getUniformLocation(this.shaderProgram, "useAtmosphere");
     this.sampleAtmosphereUniform = gl.getUniformLocation(this.shaderProgram, "uSamplerAtmosphere");
     this.atmosphereRotation = gl.getUniformLocation(this.shaderProgram, "uAtmosphereRotation");
+
+    this.useBumpMap = gl.getUniformLocation(this.shaderProgram, "useBumpMap");
+    this.sampleBumpMap = gl.getUniformLocation(this.shaderProgram, "uSamplerBumpMap");
 
     this.alphaUniform = gl.getUniformLocation(this.shaderProgram, "uAlpha");
 
@@ -149,6 +158,15 @@ CelestialBodyShader.prototype.setUniforms = function(uniforms)
         gl.bindTexture(uniforms.textures.textureAtmosphere.texType, uniforms.textures.textureAtmosphere);
         gl.uniform1i(this.sampleAtmosphereUniform, 2);
         gl.uniform1f(this.atmosphereRotation, uniforms.atmosphereRotation);
+    }
+
+    //setup sampler for bump map texture
+    gl.uniform1i(this.useBumpMap, uniforms.textures.useBumpMap);
+    if(uniforms.textures.useBumpMap)
+    {
+        gl.activeTexture(gl.TEXTURE3);
+        gl.bindTexture(uniforms.textures.bumpMap.texType, uniforms.textures.bumpMap);
+        gl.uniform1i(this.sampleBumpMap, 3);
     }
 };
 
