@@ -50,8 +50,6 @@ function webGlStart()
         "shaderUniforms": {
             "textures": {
                 "texture": textureLoader.textures.sun,
-                "useBumpMap": true,
-                "bumpMap": textureLoader.textures.moonBumpMap
             },
             "isLightSource": true
         },
@@ -119,12 +117,12 @@ function webGlStart()
     });
 
     moon.setRotation({
-        "speed": [0,35,0],
+        "speed": [0,10,0],
         "tilt": 0
     });
 
     moon.setOrbit({
-        "radius": 100,
+        "radius": 200,
         "velocity": 0.0,
         "eccentricity": 0.5,
         "axis": 0,

@@ -244,7 +244,7 @@ function Sphere(creationParams)
       }
     }
 
-    this.computeTangentVectors();
+    this.computeTangentVectors(latitudeBands, longitudeBands);
 }
 
 Sphere.prototype.initBuffers = function()
@@ -255,57 +255,82 @@ Sphere.prototype.initBuffers = function()
     this.vertexBitangentBuffer = createArrayBuffer(this.vertexBitangentData, 3);
 }
 
-Sphere.prototype.extractVector = function(index)
+Sphere.prototype.getTextureVector = function(index)
 {
-    var v0 = this.vertexPositionData[index];
-    var v1 = this.vertexPositionData[index+1];
-    var v2 = this.vertexPositionData[index+2];
-    return vec3.fromValues(v0,v1,v2);
+    var u = this.textureCoordinateData[index*2];
+    var v = this.textureCoordinateData[index*2+1];
+    return vec2.fromValues(u,v);
 }
 
-Sphere.prototype.computeTangentVectors = function()
+Sphere.prototype.getVertexPositionVector = function(index)
 {
-    for (var i = 0; i < this.normalData.length; i += 3) {
+    var x = this.vertexPositionData[index*3];
+    var y = this.vertexPositionData[index*3+1];
+    var z = this.vertexPositionData[index*3+2];
+    return vec3.fromValues(x,y,z);
+}
 
-        var v0 = this.extractVector(i);
-        var v1 = this.extractVector(i+1);
-        var v2 = this.extractVector(i+2);
+Sphere.prototype.getNormal = function(index)
+{
+    var x = this.normalData[index*3];
+    var y = this.normalData[index*3+1];
+    var z = this.normalData[index*3+2];
+    return vec3.fromValues(x,y,z);
+}
 
-        var edge1 = vec3.create();
-        var edge2 = vec3.create();
+Sphere.prototype.generateNormalAndTangent = function(normal,v1,v2,st1,st2)
+{
+    var tangent = vec3.create();
+    var binormal = vec3.create();
 
-        vec3.subtract(edge1, v1, v0);
-        vec3.subtract(edge2, v2, v0);
+    var coef = 1.0 / (st1[0] * st2[1] - st2[0] * st1[1]);
 
-        var deltaU1 = v1[0] - v0[0];
-        var deltaV1 = v1[1] - v0[1];
+    tangent[0] = coef * ((v1[0] * st2[1]) + (v2[0] * - st1[1]));
+    tangent[1] = coef * ((v1[1] * st2[1]) + (v2[1] * - st1[1]));
+    tangent[2] = coef * ((v1[2] * st2[1]) + (v2[2] * - st1[1]));
 
-        var deltaU2 = v2[0] - v0[0];
-        var deltaV2 = v2[1] - v0[1];
+    vec3.cross(binormal, normal, tangent);
 
-        var f = 1.0 / (deltaU1 * deltaV2 - deltaU2 * deltaV1);
+    return {'normal': normal, 'tangent': tangent, 'binormal': binormal};
+}
 
-        var tangent = vec3.create();
-        var bitangent = vec3.create();
+Sphere.prototype.computeTangentVectors = function(latitudeBands, longitudeBands)
+{
 
-        tangent[0] = f * (deltaV2 * edge1[0] - deltaV1 * edge2[0]);
-        tangent[1] = f * (deltaV2 * edge1[1] - deltaV1 * edge2[1]);
-        tangent[2] = f * (deltaV2 * edge1[2] - deltaV1 * edge2[2]);
-
-        bitangent[0] = f * (-deltaU2 * edge1[0] - deltaU1 * edge2[0]);
-        bitangent[1] = f * (-deltaU2 * edge1[1] - deltaU1 * edge2[1]);
-        bitangent[2] = f * (-deltaU2 * edge1[2] - deltaU1 * edge2[2]);
-
-        for (var j=0; j < 3; j++)
+    for(var latitudeNumber = 0; latitudeNumber <= latitudeBands; latitudeNumber++)
+    {
+        var firstIndex = 0;
+        for(longitudeNumber = 0; longitudeNumber <= longitudeBands; longitudeNumber++)
         {
-            this.vertexTangentData.push(tangent[j]);
-            this.vertexBitangentData.push(bitangent[j]);
+            var index = latitudeNumber*latitudeBands + longitudeNumber;
+            var adjacentIndex = index+1;
+
+            if(longitudeNumber === 0) {
+                firstIndex = index;
+            }
+
+            if(longitudeNumber === longitudeBands) {
+                adjacentIndex = firstIndex;
+            }
+
+            var v0 = this.getVertexPositionVector(index);
+            var v1 = this.getVertexPositionVector(index+1);
+
+            var uv0 = this.getTextureVector(index);
+            var uv1 = this.getTextureVector(index+1);
+
+            var normal = this.getNormal(index);
+
+            tbn = this.generateNormalAndTangent(normal,v0,v1,uv0,uv1);
+
+            for (var j=0; j < 3; j++)
+            {
+                this.vertexTangentData.push(tbn.tangent[j]);
+                this.vertexBitangentData.push(tbn.binormal[j]);
+            }
+
         }
     }
-
-    // console.log(this.indexData.length)
-    console.log(this.normalData.length)
-    console.log(this.vertexTangentData.length)
 };
 
 extend(Drawable, Sphere);

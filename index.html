@@ -54,7 +54,7 @@
             varying vec3 vTransformedNormal;
             varying vec4 vPosition;
 
-            varying mat3 TBN;
+            varying vec3 lightNormal;
 
             //lighting uniforms
             uniform vec3 uAmbientColor;
@@ -67,7 +67,7 @@
             uniform float uAtmosphereRotation;
 
             //point light location and colour uniforms
-            uniform vec3 uPointLightingLocation;
+            // uniform vec3 uPointLightingLocation;
             uniform vec3 uPointLightingColor;
 
             uniform float uMaterialShininess;
@@ -127,23 +127,23 @@
                 if (uNoDirectionalLight) {
                     lightWeighting = uAmbientColor;
                 } else {
-                    vec3 normal_tangentSpace = normalize(texture2D(uSamplerBumpMap, vec2(vTextureCoord.s, vTextureCoord.t)).rgb*2.0 - 1.0);
 
-                    vec3 lightDirection = uPointLightingLocation - vPosition.xyz;
-                    vec3 eyeDirection = normalize(-vPosition.xyz);
+                    vec3 normal = 2.0 * texture2D(uSamplerBumpMap, vec2(vTextureCoord.s, vTextureCoord.t)).rgb - 1.0;
+	                normal = normalize (normal);
 
-                    vec3 lightDirection_tangentSpace = normalize(TBN * lightDirection);
-                    vec3 eyeDirection_tangentSpace = normalize(TBN * eyeDirection);
+                    // vec3 lightDirection = uPointLightingLocation - vPosition.xyz;
+                    // vec3 eyeDirection = normalize(-vPosition.xyz);
 
-                    vec3 lightNormal_tangentSpace = normalize(lightDirection_tangentSpace);
-                    vec3 reflectionDirection_tangentSpace = reflect(-lightNormal_tangentSpace, normal_tangentSpace);
+                    // vec3 normal = normalize(vTransformedNormal);
+                    // vec3 reflectionDirection = reflect(-lightNormal, normal);
 
-                    float lightAttenuation = calculateLightAttentuation(length(lightDirection_tangentSpace));
+                    // float lightAttenuation = calculateLightAttentuation(length(lightDirection));
+                    float diffuseLightWeighting = max(dot(normal, lightNormal), 0.0);
+                    // float specularLightWeighting = pow(max(dot(reflectionDirection, eyeDirection), 0.0), uMaterialShininess);
 
-
-                    float diffuseLightWeighting = clamp(dot(normal_tangentSpace, lightNormal_tangentSpace), 0.0, 1.0);//max(dot(normal_tangentSpace, lightNormal_tangentSpace), 0.0);
-                    float specularLightWeighting = pow(clamp(dot(reflectionDirection_tangentSpace, eyeDirection_tangentSpace), 0.0, 1.0), uMaterialShininess);
-
+                    // vec3 lightDirection = uPointLightingLocation - vPosition.xyz;
+                    // vec3 eyeDirection = normalize(-vPosition.xyz);
+                    //
                     // vec3 normal = normalize(vTransformedNormal);
                     // vec3 lightNormal = normalize(lightDirection);
                     // vec3 reflectionDirection = reflect(-lightNormal, normal);
@@ -153,8 +153,8 @@
                     // float specularLightWeighting = pow(max(dot(reflectionDirection, eyeDirection), 0.0), uMaterialShininess);
 
                     //correction for the loss of angle information during reflection of the normal
-                    specularLightWeighting *= diffuseLightWeighting;
-                    lightWeighting = uEmissiveColor + lightAttenuation * uPointLightingColor * (uAmbientColor + specularLightWeighting + diffuseLightWeighting);
+                    // specularLightWeighting *= diffuseLightWeighting;
+                    lightWeighting = uEmissiveColor + /*lightAttenuation **/ uPointLightingColor * (uAmbientColor + /*specularLightWeighting +*/ diffuseLightWeighting);
 
                     fragmentColor = textureDarkSideOfPlanet(fragmentColor, diffuseLightWeighting);
                 }
@@ -177,11 +177,13 @@
             uniform mat4 uPMatrix;
             uniform mat3 uNMatrix;
 
+            uniform vec3 uPointLightingLocation;
+            varying vec3 lightNormal;
+
             varying vec2 vTextureCoord;
             varying vec3 vTransformedNormal;
             varying vec4 vPosition;
 
-            varying mat3 TBN;
 
             mat3 transpose(mat3 inMatrix) {
                 vec3 i0 = inMatrix[0];
@@ -201,12 +203,19 @@
                 vPosition = uMVMatrix * vec4(aVertexPosition, 1.0);
                 gl_Position = uPMatrix * vPosition;
                 vTextureCoord = aTextureCoord;
-                vTransformedNormal = uNMatrix * aVertexNormal;
 
-                vec3 tangent = uNMatrix * aVertexTangent;
-                vec3 bitangent = uNMatrix * aVertexBitangent;
+                vTransformedNormal = normalize(uNMatrix * aVertexNormal);
 
-                TBN = transpose(mat3(tangent, bitangent, vTransformedNormal));
+                vec3 t = normalize(uNMatrix * aVertexTangent);
+                vec3 b = normalize(uNMatrix * aVertexBitangent); //cross (vTransformedNormal, t);
+
+                vec3 lightDir = normalize(uPointLightingLocation.xyz - vPosition.xyz);
+
+                vec3 v;
+            	v.x = dot (lightDir, t);
+            	v.y = dot (lightDir, b);
+            	v.z = dot (lightDir, vTransformedNormal);
+            	lightNormal = normalize (v);
             }
         </script>
         <!-- End of WebGL shaders -->
