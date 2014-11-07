@@ -17,7 +17,6 @@ function SphericalCamera()
 
 SphericalCamera.prototype.keyPressed = function(key) {
     //zooming the camera in and out
-    console.log(this.radius);
     if (key === Keys.W_KEY && this.radius > 1) {
         this.zoomRate = -2;
     } else if (key === Keys.S_KEY) {
