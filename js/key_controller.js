@@ -1,39 +1,27 @@
-function KeyController()
-{
-    this.currentlyPressedKeys = {};
+var Keys = {
+    LEFT_KEY: 37,
+    UP_KEY: 38,
+    RIGHT_KEY: 39,
+    DOWN_KEY: 40,
 
-    this.LEFT_KEY = 37;
-    this.UP_KEY = 38;
-    this.RIGHT_KEY = 39;
-    this.DOWN_KEY = 40;
-
-    this.W_KEY = 87;
-    this.S_KEY = 83;
-    this.A_KEY = 65;
-    this.D_KEY = 68;
-    this.R_KEY = 82;
-    this.F_KEY = 70;
-    this.X_KEY = 88;
-    this.C_KEY = 67;
-
-}
-
-KeyController.prototype.handleKeys = function()
-{
-    camera.handleCameraKeys();
+    W_KEY: 87,
+    S_KEY: 83,
+    A_KEY: 65,
+    D_KEY: 68,
+    R_KEY: 82,
+    F_KE: 70,
+    X_KEY: 88,
+    C_KEY: 67
 };
 
-KeyController.prototype.isPressed = function(key)
-{
-    return this.currentlyPressedKeys[key];
-};
+function KeyController(){}
 
 KeyController.prototype.handleKeyDown = function(event)
 {
-    this.currentlyPressedKeys[event.keyCode] = true;
+    camera.keyPressed(event.keyCode);
 };
 
 KeyController.prototype.handleKeyUp = function(event)
 {
-    this.currentlyPressedKeys[event.keyCode] = false;
+    camera.keyReleased(event.keyCode);
 };

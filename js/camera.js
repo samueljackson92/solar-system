@@ -1,9 +1,5 @@
 function Camera()
 {
-    this.xPos = 0;
-    this.yPos = 0;
-    this.zPos = 250;
-
     this.position = vec3.fromValues(0,0,0);
 
     this.xSpeed = 0;
@@ -11,81 +7,89 @@ function Camera()
     this.zSpeed = 0;
 
     this.theta = 0;
+    this.thetaRate = 0;
+
     this.phi = 0;
+    this.phiRate = 0;
 
     this.yaw = 0;
     this.yawRate = 0;
 }
 
-Camera.prototype.handleCameraKeys = function(controller) {
+Camera.prototype.keyPressed = function(key) {
     //moving on the z direction
-    if (keyController.isPressed(keyController.W_KEY)) {
+    if (key === Keys.W_KEY) {
         this.zSpeed = 0.1;
-    } else if (keyController.isPressed(keyController.S_KEY)) {
+    } else if (key === Keys.S_KEY) {
         this.zSpeed = -0.1;
-    } else {
-        this.zSpeed = 0;
     }
 
-    if (keyController.isPressed(keyController.A_KEY)) {
+    if (key === Keys.A_KEY) {
         this.xSpeed = 0.1;
-    } else if (keyController.isPressed(keyController.D_KEY)) {
+    } else if (key === Keys.D_KEY) {
         this.xSpeed = -0.1;
-    } else {
-        this.xSpeed = 0;
     }
 
-    if (keyController.isPressed(keyController.F_KEY)) {
+    if (key === Keys.F_KEY) {
         this.ySpeed = 0.1;
-    } else if (keyController.isPressed(keyController.R_KEY)) {
+    } else if (key === Keys.R_KEY) {
         this.ySpeed = -0.1;
-    } else {
-        this.ySpeed = 0;
     }
 
-    if(keyController.isPressed(keyController.UP_KEY))
-    {
-        this.phi -= 1;
-    }
-    else if (keyController.isPressed(keyController.DOWN_KEY))
-    {
-        this.phi += 1;
+    if(key === Keys.UP_KEY) {
+        this.phiRate = -1;
+    } else if (key === Keys.DOWN_KEY) {
+        this.phiRate = 1;
     }
 
-    if(keyController.isPressed(keyController.LEFT_KEY))
-    {
-        this.theta += 1;
-    }
-    else if (keyController.isPressed(keyController.RIGHT_KEY))
-    {
-        this.theta -= 1;
+    if(key === Keys.LEFT_KEY) {
+        this.thetaRate = 1;
+    } else if (key === Keys.RIGHT_KEY) {
+        this.thetaRate = -1;
     }
 
-    if(keyController.isPressed(keyController.X_KEY))
+};
+
+Camera.prototype.keyReleased = function(key)
+{
+    if(key === Keys.W_KEY || key === Keys.S_KEY)
     {
-        this.yaw -= 1;
+        this.zSpeed = 0.0;
     }
-    else if (keyController.isPressed(keyController.C_KEY))
+
+    if(key === Keys.A_KEY || key === Keys.D_KEY)
     {
-        this.yaw += 1;
+        this.xSpeed = 0.0;
+    }
+
+    if(key === Keys.F_KEY || key === Keys.R_KEY)
+    {
+        this.ySpeed = 0.0;
+    }
+
+    if(key === Keys.UP_KEY || key === Keys.DOWN_KEY)
+    {
+        this.phiRate = 0.0;
+    }
+
+    if(key === Keys.LEFT_KEY || key === Keys.RIGHT_KEY)
+    {
+        this.thetaRate = 0.0;
     }
 };
 
 Camera.prototype.update = function(delta)
 {
-    var speed = vec3.fromValues(this.xSpeed, this.ySpeed, this.zSpeed);
-    vec3.scale(speed, speed, delta);
-    vec3.add(this.position, this.position, speed);
+    var velocity = vec3.fromValues(this.xSpeed, this.ySpeed, this.zSpeed);
+    vec3.scale(velocity, velocity, delta);
+    vec3.add(this.position, this.position, velocity);
 
-    var r = vec3.length(this.position);
-    this.xPos = r * Math.cos(degToRad(this.theta)) * Math.sin(degToRad(this.phi));
-    this.yPos = r * Math.sin(degToRad(this.theta)) * Math.sin(degToRad(this.phi));
-    this.zPos = r * Math.cos(degToRad(this.phi));
+    this.theta += this.thetaRate;
+    this.phi += this.phiRate;
 };
 
 Camera.prototype.move = function(perspectiveMatrix)
 {
-    mat4.rotate(perspectiveMatrix, perspectiveMatrix, degToRad(this.yaw), [0, 1, 0]);
     mat4.translate(perspectiveMatrix, perspectiveMatrix, this.position);
     mat4.rotate(perspectiveMatrix, perspectiveMatrix, degToRad(this.theta), [0, 1, 0]);
     mat4.rotate(perspectiveMatrix, perspectiveMatrix, degToRad(this.phi), [0, 0, 1]);
@@ -99,4 +103,5 @@ Camera.prototype.getCameraPosition = function()
 Camera.prototype.setCameraPosition = function(position)
 {
     this.position = position;
+    console.log(this.position);
 };

@@ -19,7 +19,9 @@ function webGlStart()
 
     solarSystem = new SceneGraph();
     camera = new Camera();
-    camera.setCameraPosition([0,0,-100]);
+    var pos = vec3.fromValues(0,0,-250);
+    console.log(pos);
+    camera.setCameraPosition(pos);
     textureLoader = new TextureLoader();
 
     keyController = new KeyController();
@@ -214,7 +216,6 @@ function tick()
 {
     requestAnimFrame(tick);
     resizeViewport();
-    keyController.handleKeys();
     drawScene();
     animate();
 }
