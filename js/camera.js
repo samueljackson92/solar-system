@@ -17,10 +17,13 @@ function SphericalCamera()
 
 SphericalCamera.prototype.keyPressed = function(key) {
     //zooming the camera in and out
-    if (key === Keys.W_KEY) {
+    console.log(this.radius);
+    if (key === Keys.W_KEY && this.radius > 1) {
         this.zoomRate = -2;
     } else if (key === Keys.S_KEY) {
         this.zoomRate = 2;
+    } else {
+        this.zoomRate = 0;
     }
 
     //rotating the camera along phi
@@ -78,9 +81,10 @@ SphericalCamera.prototype.move = function(perspectiveMatrix)
 SphericalCamera.prototype.getCameraPosition = function()
 {
     var position = vec3.create();
-    position[0] = this.radius * Math.sin(this.theta);
-    position[1] = this.radius * Math.sin(this.phi);
-    position[2] = this.radius * Math.cos(this.theta);
+    var r = (this.radius > 0 ? this.radius : 1);
+    position[0] = r * Math.sin(this.theta);
+    position[1] = r * Math.sin(this.phi);
+    position[2] = r * Math.cos(this.theta);
     return position;
 };
 
