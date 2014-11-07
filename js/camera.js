@@ -1,4 +1,4 @@
-function Camera()
+function SphericalCamera()
 {
     this.position = vec3.fromValues(0,0,0);
 
@@ -16,7 +16,7 @@ function Camera()
     this.yawRate = 0;
 }
 
-Camera.prototype.keyPressed = function(key) {
+SphericalCamera.prototype.keyPressed = function(key) {
     //moving on the z direction
     if (key === Keys.W_KEY) {
         this.zSpeed = 0.1;
@@ -50,7 +50,7 @@ Camera.prototype.keyPressed = function(key) {
 
 };
 
-Camera.prototype.keyReleased = function(key)
+SphericalCamera.prototype.keyReleased = function(key)
 {
     if(key === Keys.W_KEY || key === Keys.S_KEY)
     {
@@ -78,7 +78,7 @@ Camera.prototype.keyReleased = function(key)
     }
 };
 
-Camera.prototype.update = function(delta)
+SphericalCamera.prototype.update = function(delta)
 {
     var velocity = vec3.fromValues(this.xSpeed, this.ySpeed, this.zSpeed);
     vec3.scale(velocity, velocity, delta);
@@ -88,19 +88,19 @@ Camera.prototype.update = function(delta)
     this.phi += this.phiRate;
 };
 
-Camera.prototype.move = function(perspectiveMatrix)
+SphericalCamera.prototype.move = function(perspectiveMatrix)
 {
     mat4.translate(perspectiveMatrix, perspectiveMatrix, this.position);
     mat4.rotate(perspectiveMatrix, perspectiveMatrix, degToRad(this.theta), [0, 1, 0]);
     mat4.rotate(perspectiveMatrix, perspectiveMatrix, degToRad(this.phi), [0, 0, 1]);
 };
 
-Camera.prototype.getCameraPosition = function()
+SphericalCamera.prototype.getCameraPosition = function()
 {
     return this.position;
 };
 
-Camera.prototype.setCameraPosition = function(position)
+SphericalCamera.prototype.setCameraPosition = function(position)
 {
     this.position = position;
     console.log(this.position);

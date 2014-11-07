@@ -18,9 +18,8 @@ function webGlStart()
     mvMatrix = mat4.create();
 
     solarSystem = new SceneGraph();
-    camera = new Camera();
+    camera = new SphericalCamera();
     var pos = vec3.fromValues(0,0,-250);
-    console.log(pos);
     camera.setCameraPosition(pos);
     textureLoader = new TextureLoader();
 
