@@ -5,6 +5,8 @@ var camera;
 var textureLoader;
 var majorPlanets = [];
 
+var planetShader;
+
 var perspectiveMatrix;
 var mvMatrix;
 
@@ -20,6 +22,7 @@ function webGlStart()
 
     solarSystem = new SceneGraph();
     camera = new SphericalCamera();
+
     var pos = vec3.fromValues(0,0,-250);
     camera.setCameraPosition(pos);
     textureLoader = new TextureLoader();
@@ -33,7 +36,7 @@ function webGlStart()
         keyController.handleKeyUp(event);
     };
 
-    var planetShader = new CelestialBodyShader("shader-vs", 'shader-fs', {
+    planetShader = new CelestialBodyShader("shader-vs", 'shader-fs', {
         "pointLightLocation": vec3.fromValues(0.0,0.0,0.0),
         "pointLightColor": vec3.fromValues(1.0,1.0,1.0),
         "materialShininess": 3.0,
@@ -223,6 +226,7 @@ function tick()
 {
     requestAnimFrame(tick);
     resizeViewport();
+    parseMenuOptions();
     drawScene();
     animate();
 }
@@ -269,4 +273,24 @@ function animate()
         solarSystem.animateScene(delta);
     }
     lastTime = timeNow;
+}
+
+function parseMenuOptions()
+{
+    //light intensity
+    var intensity = parseFloat(document.getElementById("light-intensity").value) / 100.0;
+    planetShader.globalUniforms.pointLightColor = vec3.fromValues(intensity, intensity, intensity);
+
+    //material shininess
+    var shininess = parseFloat(document.getElementById("light-shininess").value);
+    planetShader.globalUniforms.materialShininess = shininess;
+
+    //light attenuation
+    var constantLightAttenuation = parseFloat(document.getElementById("light-attenuation-constant").value);
+    var linearLightAttenuation = parseFloat(document.getElementById("light-attenuation-linear").value);
+    var quadraticLightAttenuation = parseFloat(document.getElementById("light-attenuation-quadratic").value);
+
+    planetShader.globalUniforms.lightAttenuation.constant = constantLightAttenuation;
+    planetShader.globalUniforms.lightAttenuation.linear = linearLightAttenuation;
+    planetShader.globalUniforms.lightAttenuation.quadratic = quadraticLightAttenuation;
 }
