@@ -170,6 +170,7 @@
         <!-- library includes -->
         <script src="js/third_party/gl-matrix-min.js" type="text/javascript"></script>
         <script src="js/third_party/webgl-utils.js" type="text/javascript"></script>
+        <script src="js/third_party/classie.js" type="text/javascript"></script>
         <!-- application includes -->
         <script src="js/utils.js" type="text/javascript"></script>
         <script src="js/models/basic_models.js" type="text/javascript"></script>
@@ -183,8 +184,57 @@
         <script src="js/texture_loader.js" type="text/javascript"></script>
         <script src="js/main.js" type="text/javascript"></script>
         <!-- End of Javascript imports -->
+
     </head>
     <body onLoad="webGlStart();">
-        <canvas id="canvas" style="border: none;" width="500" height="500"></canvas>
+        <nav class="menu push-menu-right">
+            <ul>
+                <li><h3 class="menu-section-header">Keyboard Controls</h3></li>
+                <li>
+                    <p>Q - Open/Close menu</p>
+                    <p>W - Zoom In</p>
+                    <p>S - Zoom Out</p>
+                    <p>Up/Down/Left/Right - Rotate Camera</p>
+                    <p>0-9 - Select Planet</p>
+                </li>
+                <li><h3 class="menu-section-header">Lighting Parameters</h3></li>
+                <li><p>Directional:<input type="range" class="menu-input-range" id="directional-light-intensity" value="50" max="100", min="0" /></p></li>
+                <li><p>Ambient: <input type="range" class="menu-input-range" id="ambient-light-intensity" value="50" max="100", min="0" /></p></li>
+                <li><p>Shininess: <input type="range" class="menu-input-range" id="light-shininess" value="3" max="6", min="0" /></p></li>
+                <li><h4>Light Attenuation</h4></li>
+                <li><p>Constant: <input type="text" class="menu-input-single" id="light-attenuation-constant" value="0.0001" /></p></li>
+                <li><p>Linear: <input type="text" class="menu-input-single" id="light-attenuation-linear" value="0.0001" /></p></li>
+                <li><p>Quadratic: <input type="text" class="menu-input-single" id="light-attenuation-quadratic" value="0.0001" /></p></li>
+            </ul>
+        </nav><!-- /push menu right -->
+         <div id="wrapper">
+        <div id="main">
+            <div class="container">
+                <canvas id="canvas" style="border: none;" width="500" height="500"></canvas>
+            </div>
+        </div>
     </body>
+    <script type="text/javascript">
+    (function( window ){
+        var body = document.body,
+            mask = document.createElement("div"),
+            togglePushRight = document.querySelector( ".toggle-push-right" ),
+            pushMenuRight = document.querySelector( ".push-menu-right" ),
+            activeNav = "";
+
+        document.addEventListener( "keydown", function(e){
+            if(e.keyCode === Keys.Q_KEY && activeNav === "")
+            {
+                classie.add( document.body, "pmr-open" );
+                activeNav = "pmr-open";
+            }
+            else if (e.keyCode === Keys.Q_KEY && activeNav !== "")
+            {
+                classie.remove( document.body, activeNav );
+                activeNav = "";
+            }
+        } );
+
+    })( window );
+    </script>
 </html>
