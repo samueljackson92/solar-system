@@ -3,6 +3,7 @@ var gl;
 var solarSystem;
 var camera;
 var textureLoader;
+var majorPlanets = [];
 
 var perspectiveMatrix;
 var mvMatrix;
@@ -95,7 +96,7 @@ function webGlStart()
         "velocity": 0.0005,
         "eccentricity": 0,
         "axis": 0,
-        "tilt": -45
+        "tilt": -5
     });
 
     sol.addChild(earth);
@@ -170,9 +171,14 @@ function webGlStart()
     saturn.addChild(rings);
     sol.addChild(saturn);
 
+    majorPlanets.push(sol);
+    majorPlanets.push(earth);
+    majorPlanets.push(saturn);
+
+
+    camera.setFocussedObject(sol);
     solarSystem.addDrawableObject(sol);
 
-    camera.setFocussedObject(earth);
 
     var skyBoxShader = new BasicShader("basic-vs", 'basic-fs');
     skyBoxShader.init();

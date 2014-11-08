@@ -194,7 +194,7 @@ function Sphere(creationParams)
 
     var latitudeBands = creationParams.dimensions.latitude;
     var longitudeBands = creationParams.dimensions.longitude;
-    var radius = creationParams.dimensions.radius;
+    this.radius = creationParams.dimensions.radius;
 
     for(var latitudeNumber = 0; latitudeNumber <= latitudeBands; latitudeNumber++)
     {
@@ -219,9 +219,9 @@ function Sphere(creationParams)
             this.normalData.push(y);
             this.normalData.push(z);
 
-            this.vertexPositionData.push(radius * x);
-            this.vertexPositionData.push(radius * y);
-            this.vertexPositionData.push(radius * z);
+            this.vertexPositionData.push(this.radius * x);
+            this.vertexPositionData.push(this.radius * y);
+            this.vertexPositionData.push(this.radius * z);
 
             this.textureCoordinateData.push(u);
             this.textureCoordinateData.push(v);

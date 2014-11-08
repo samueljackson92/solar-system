@@ -89,6 +89,11 @@ CelestialBody.prototype.getChildren = function()
     return this.orbitals;
 }
 
+CelestialBody.prototype.getRadius = function()
+{
+    return this.radius;
+}
+
 CelestialBody.prototype.animateOrbit = function(delta)
 {
     if(this.orbit.velocity !== 0)

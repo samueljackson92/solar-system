@@ -41,7 +41,6 @@ SphericalCamera.prototype.keyPressed = function(key) {
     } else if (key === Keys.RIGHT_KEY) {
         this.thetaRate = -0.05;
     }
-
 };
 
 SphericalCamera.prototype.keyReleased = function(key)
@@ -106,4 +105,5 @@ SphericalCamera.prototype.setCameraPosition = function(position)
 SphericalCamera.prototype.setFocussedObject = function(object)
 {
     this.focussedObject = object;
+    this.radius = this.focussedObject.radius * 5;
 };
