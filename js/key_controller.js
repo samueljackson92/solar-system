@@ -8,6 +8,19 @@ var Keys = {
     W_KEY: 87,
     S_KEY: 83,
 
+    F1_KEY:	112,
+    F2_KEY:	113,
+    F3_KEY:	114,
+    F4_KEY:	115,
+    F5_KEY:	116,
+    F6_KEY:	117,
+    F7_KEY:	118,
+    F8_KEY:	119,
+    F9_KEY:	120,
+    F10_KEY: 121,
+    F11_KEY: 122,
+    F12_KEY: 123,
+
     NUM0_KEY:	48,
     NUM1_KEY:	49,
     NUM2_KEY:	50,
@@ -28,9 +41,9 @@ KeyController.prototype.handleKeyDown = function(event)
     camera.keyPressed(key);
 
 
-    if(key >= Keys.NUM0_KEY && key <= Keys.NUM9_KEY)
+    if(key >= Keys.F1_KEY && key <= Keys.F12_KEY)
     {
-        var index = key - Keys.NUM0_KEY;
+        var index = key - Keys.F1_KEY;
         if (index < majorPlanets.length)
         {
             camera.setFocussedObject(majorPlanets[index]);
