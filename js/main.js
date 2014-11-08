@@ -92,10 +92,10 @@ function webGlStart()
 
     earth.setOrbit({
         "radius": 250,
-        "velocity": 0.00001,
+        "velocity": 0.0005,
         "eccentricity": 0,
         "axis": 0,
-        "tilt": -5
+        "tilt": -45
     });
 
     sol.addChild(earth);
@@ -171,6 +171,8 @@ function webGlStart()
     sol.addChild(saturn);
 
     solarSystem.addDrawableObject(sol);
+
+    camera.setFocussedObject(earth);
 
     var skyBoxShader = new BasicShader("basic-vs", 'basic-fs');
     skyBoxShader.init();

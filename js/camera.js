@@ -2,6 +2,7 @@ function SphericalCamera()
 {
     this.upVector = vec3.fromValues(0,1,0);
     this.position = vec3.fromValues(0,0,0);
+    this.lookAtVector = vec3.fromValues(0,0,0);
 
     this.radius = 0;
     this.zoomRate = 0;
@@ -70,11 +71,14 @@ SphericalCamera.prototype.update = function(delta)
 
 SphericalCamera.prototype.move = function(perspectiveMatrix)
 {
-    position = this.getCameraPosition();
+    var position = this.getCameraPosition();
+    var lookAtVector = this.focussedObject.getCurrentPosition();
 
-    var m = mat4.create();
-    mat4.lookAt(m, position, [0,0,0], this.upVector);
-    mat4.multiply(perspectiveMatrix, perspectiveMatrix, m);
+    vec3.add(position, position, lookAtVector);
+
+    var view = mat4.create();
+    mat4.lookAt(view, position, lookAtVector, this.upVector);
+    mat4.multiply(perspectiveMatrix, perspectiveMatrix, view);
 };
 
 SphericalCamera.prototype.getCameraPosition = function()
@@ -97,4 +101,9 @@ SphericalCamera.prototype.setCameraPosition = function(position)
     this.radius = length;
     this.theta = Math.acos(z/length);
     this.phi = Math.atan2(y,x);
+};
+
+SphericalCamera.prototype.setFocussedObject = function(object)
+{
+    this.focussedObject = object;
 };

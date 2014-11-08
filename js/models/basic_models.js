@@ -42,6 +42,11 @@ Drawable.prototype.setPositionVector = function(position)
     this.positionVector = position;
 }
 
+Drawable.prototype.getPositionVector = function(position)
+{
+    return this.positionVector;
+};
+
 Drawable.prototype.draw= function(shaderProgram)
 {
     bindBufferToShader(this.vertexPositionBuffer, shaderProgram.vertexPositionAttribute);

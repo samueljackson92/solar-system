@@ -10,7 +10,6 @@ function CelestialBody(creationParams)
 
     this.orbit = {};
     this.orbit.theta = 0;
-
     this.orbit.radius = 0;
     this.orbit.currentRadius = 0;
     this.orbit.velocity = 0;
@@ -20,6 +19,16 @@ function CelestialBody(creationParams)
 
     this.orbitals = [];
 }
+
+CelestialBody.prototype.getCurrentPosition = function()
+{
+    var currentPosition = vec3.create();
+    var transform = mat4.create();
+    mat4.rotate(transform, transform, degToRad(this.orbit.tilt), [0,0,1]);
+    mat4.rotate(transform, transform, this.orbit.theta, [0,1,0]);
+    vec3.transformMat4(currentPosition, this.positionVector, transform);
+    return currentPosition;
+};
 
 CelestialBody.prototype.subSystemTransforms = function(modelViewMatrix)
 {
@@ -36,7 +45,7 @@ CelestialBody.prototype.subSystemTransforms = function(modelViewMatrix)
 
     //move body to position in scene
     mat4.translate(modelViewMatrix, modelViewMatrix, this.positionVector);
-}
+};
 
 CelestialBody.prototype.draw = function(modelViewMatrix)
 {
