@@ -1,5 +1,7 @@
 var gl;
 
+var config;
+
 var solarSystem;
 var camera;
 var textureLoader;
@@ -11,6 +13,14 @@ var perspectiveMatrix;
 var mvMatrix;
 
 var skyBox;
+
+function init()
+{
+    loadJSON('config.json', function(response) {
+        config = response;
+        webGlStart();
+    });
+}
 
 function webGlStart()
 {

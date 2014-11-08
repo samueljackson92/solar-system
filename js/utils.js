@@ -74,10 +74,32 @@ function getShader(gl, id) {
     return shader;
 }
 
+function loadJSON(fileName, callback) {
+    var xobj = new XMLHttpRequest();
+    xobj.overrideMimeType("application/json");
+    xobj.open('GET', fileName, true);
+    xobj.onreadystatechange = function () {
+        if (xobj.readyState == 4 && xobj.status == "200") {
+            var data = JSON.parse(xobj.responseText);
+            callback(data);
+        }
+    };
+    xobj.send(null);
+}
+
 //convert degrees to radians
 function degToRad(degrees)
 {
     return degrees * Math.PI / 180;
+}
+
+function setParameters(target, source)
+{
+    var result = {};
+    for (var key in source) {
+      if (target[key]) result[key] = source[key];
+    }
+    return result;
 }
 
 function extend(base, sub) {
