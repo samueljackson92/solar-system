@@ -21,7 +21,7 @@
             ],
             "tilt": 0
         },
-        "orbitals":{
+        "orbitals": {
             "earth": {
                 "model": "CelestialBody",
                 "dimensions": {
@@ -54,6 +54,37 @@
                     "eccentricity": 0,
                     "axis": 0,
                     "tilt": -5
+                },
+                "orbitals": {
+                    "moon": {
+                        "model": "CelestialBody",
+                        "shader": "planetShader",
+                        "shaderUniforms": {
+                            "textures": {
+                                "texture": "moon"
+                            }
+                        },
+                        "dimensions": {
+                            "latitude": 30,
+                            "longitude": 30,
+                            "radius": 1
+                        },
+                        "rotation": {
+                            "speed": [
+                                0,
+                                35,
+                                0
+                            ],
+                            "tilt": 0
+                        },
+                        "orbit": {
+                            "radius": 10,
+                            "velocity": 0.01,
+                            "eccentricity": 0.5,
+                            "axis": 0,
+                            "tilt": -45
+                        }
+                    }
                 }
             },
             "saturn": {
@@ -83,6 +114,26 @@
                     "eccentricity": 0,
                     "axis": 0,
                     "tilt": 0
+                },
+                "orbitals": {
+                    "saturnsRings": {
+                        "model": "Rings",
+                        "shader": "planetShader",
+                        "shaderUniforms": {
+                            "textures": {
+                                "texture": "saturnsRings"
+                            },
+                            "lightingParameters": {
+                                "ambientColor": [
+                                    1,
+                                    1,
+                                    1
+                                ],
+                                "alpha": 0.8
+                            }
+                        },
+                        "isBlended": true
+                    }
                 }
             }
         }
