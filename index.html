@@ -219,7 +219,9 @@
             mask = document.createElement("div"),
             togglePushRight = document.querySelector( ".toggle-push-right" ),
             pushMenuRight = document.querySelector( ".push-menu-right" ),
-            activeNav = "";
+            activeNav = "pmr-open";
+
+        classie.add( document.body, "pmr-open" );
 
         document.addEventListener( "keydown", function(e){
             if(e.keyCode === Keys.Q_KEY && activeNav === "")
