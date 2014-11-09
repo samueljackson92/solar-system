@@ -366,7 +366,15 @@
                                 "alpha": 0.8
                             }
                         },
-                        "isBlended": true
+                        "isBlended": true,
+                        "rotation": {
+                            "speed": [
+                                0,
+                                25,
+                                0
+                            ],
+                            "tilt": 26.7
+                        }
                     }
                 }
             },
