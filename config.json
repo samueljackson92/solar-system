@@ -4,7 +4,7 @@
         "dimensions": {
             "latitude": 60,
             "longitude": 60,
-            "radius": 20
+            "radius": 320
         },
         "shader": "planetShader",
         "shaderUniforms": {
@@ -44,7 +44,7 @@
                     "tilt": 2.11
                 },
                 "orbit": {
-                    "radius": 41,
+                    "radius": 441,
                     "velocity": 0.00047,
                     "eccentricity": 0.2,
                     "axis": 0,
@@ -73,7 +73,7 @@
                     "tilt": 117.36
                 },
                 "orbit": {
-                    "radius": 77,
+                    "radius": 477,
                     "velocity": 0.00035,
                     "eccentricity": 0.0067,
                     "axis": 0,
@@ -107,7 +107,7 @@
                     "tilt": 23
                 },
                 "orbit": {
-                    "radius": 107.45,
+                    "radius": 507.45,
                     "velocity": 0.00029,
                     "eccentricity": 0.016,
                     "axis": 0,
@@ -167,7 +167,7 @@
                     "tilt": 25
                 },
                 "orbit": {
-                    "radius": 163.6,
+                    "radius": 563.6,
                     "velocity": 0.00024,
                     "eccentricity": 0.0067,
                     "axis": 0,
@@ -196,11 +196,129 @@
                     "tilt": -23
                 },
                 "orbit": {
-                    "radius": 559.048,
+                    "radius": 959.048,
                     "velocity": 0.00013,
                     "eccentricity": 0.048,
                     "axis": 0,
                     "tilt": 3.13
+                },
+                "orbitals": {
+                    "io": {
+                        "model": "CelestialBody",
+                        "shader": "planetShader",
+                        "shaderUniforms": {
+                            "textures": {
+                                "texture": "moon"
+                            }
+                        },
+                        "dimensions": {
+                            "latitude": 30,
+                            "longitude": 30,
+                            "radius": 5
+                        },
+                        "rotation": {
+                            "speed": [
+                                0,
+                                35,
+                                0
+                            ],
+                            "tilt": 1.5
+                        },
+                        "orbit": {
+                            "radius": 135,
+                            "velocity": 0.0004,
+                            "eccentricity": 0.3,
+                            "axis": 0,
+                            "tilt": 5.145
+                        }
+                    },
+                    "europa": {
+                        "model": "CelestialBody",
+                        "shader": "planetShader",
+                        "shaderUniforms": {
+                            "textures": {
+                                "texture": "moon"
+                            }
+                        },
+                        "dimensions": {
+                            "latitude": 30,
+                            "longitude": 30,
+                            "radius": 10
+                        },
+                        "rotation": {
+                            "speed": [
+                                0,
+                                35,
+                                0
+                            ],
+                            "tilt": 1.5
+                        },
+                        "orbit": {
+                            "radius": 120,
+                            "velocity": 0.0003,
+                            "eccentricity": 0.3,
+                            "axis": 0,
+                            "tilt": -20
+                        }
+                    },
+                    "ganymede": {
+                        "model": "CelestialBody",
+                        "shader": "planetShader",
+                        "shaderUniforms": {
+                            "textures": {
+                                "texture": "moon"
+                            }
+                        },
+                        "dimensions": {
+                            "latitude": 30,
+                            "longitude": 30,
+                            "radius": 5
+                        },
+                        "rotation": {
+                            "speed": [
+                                0,
+                                35,
+                                0
+                            ],
+                            "tilt": 1.5
+                        },
+                        "orbit": {
+                            "radius": 130,
+                            "velocity": 0.0002,
+                            "eccentricity": 0.3,
+                            "axis": 0,
+                            "tilt": 10
+                        }
+                    },
+                    "callisto": {
+                        "model": "CelestialBody",
+                        "shader": "planetShader",
+                        "shaderUniforms": {
+                            "textures": {
+                                "texture": "moon"
+                            }
+                        },
+                        "dimensions": {
+                            "latitude": 30,
+                            "longitude": 30,
+                            "radius": 5
+                        },
+                        "rotation": {
+                            "speed": [
+                                0,
+                                35,
+                                0
+                            ],
+                            "tilt": 1.5
+                        },
+                        "orbit": {
+                            "radius": 140,
+                            "velocity": 0.0001,
+                            "eccentricity": 0.05,
+                            "axis": 0,
+                            "tilt": 5
+                        }
+                    }
                 }
             },
             "saturn": {
@@ -225,7 +343,7 @@
                     "tilt": 26.7
                 },
                 "orbit": {
-                    "radius": 1025.217,
+                    "radius": 1425.217,
                     "velocity": 0.00009,
                     "eccentricity": 0.055,
                     "axis": 0,
@@ -274,7 +392,7 @@
                     "tilt": 97.77
                 },
                 "orbit": {
-                    "radius": 2062.145,
+                    "radius": 2462.145,
                     "velocity": 0.000068,
                     "eccentricity": 0.047,
                     "axis": 0,
@@ -291,7 +409,7 @@
                 "shader": "planetShader",
                 "shaderUniforms": {
                     "textures": {
-                        "texture": "uranus"
+                        "texture": "neptune"
                     }
                 },
                 "rotation": {
@@ -303,7 +421,7 @@
                     "tilt": 97.77
                 },
                 "orbit": {
-                    "radius": 3232.919,
+                    "radius": 3632.919,
                     "velocity": 0.000054,
                     "eccentricity": 0.0008,
                     "axis": 0,
