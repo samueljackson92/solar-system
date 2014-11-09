@@ -1,9 +1,37 @@
-function SceneGraph()
+function SceneGraph(root)
 {
     this.matrixStack = [];
     this.drawableObjects = [];
     this.blendingBuffer = [];
+
+    for (var item in root) {
+        if (root.hasOwnProperty(item)) {
+            var currentObjJSON = root[item];
+            var obj = new window[currentObjJSON.model](currentObjJSON);
+            if (currentObjJSON.orbitals)
+            {
+                this.buildSubSystem(obj, currentObjJSON.orbitals);
+            }
+            this.addDrawableObject(obj);
+        }
+    }
 }
+
+SceneGraph.prototype.buildSubSystem = function(parent, orbitals)
+{
+    for (var item in orbitals) {
+        if (orbitals.hasOwnProperty(item)) {
+            var currentObjJSON = orbitals[item];
+            var obj = new window[currentObjJSON.model](currentObjJSON);
+            if (currentObjJSON.orbitals)
+            {
+                this.buildSubSystem(obj, currentObjJSON.orbitals);
+            }
+            parent.addChild(obj);
+        }
+    }
+};
+
 
 SceneGraph.prototype.push = function(matrix)
 {

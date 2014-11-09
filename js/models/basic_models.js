@@ -1,7 +1,7 @@
 function Drawable(creationParams)
 {
     //texture object defining look of the body
-    this.shaderProgram = creationParams.shader;
+    this.shaderProgram = shaders[creationParams.shader];
     this.shaderUniforms = creationParams.shaderUniforms;
 
     if(this.shaderUniforms.lightingParameters === undefined)

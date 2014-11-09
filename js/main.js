@@ -7,7 +7,7 @@ var camera;
 var textureLoader;
 var majorPlanets = [];
 
-var planetShader;
+var shaders = {};
 
 var perspectiveMatrix;
 var mvMatrix;
@@ -30,7 +30,6 @@ function webGlStart()
     perspectiveMatrix = mat4.create();
     mvMatrix = mat4.create();
 
-    solarSystem = new SceneGraph();
     camera = new SphericalCamera();
 
     var pos = vec3.fromValues(0,0,-250);
@@ -46,7 +45,7 @@ function webGlStart()
         keyController.handleKeyUp(event);
     };
 
-    planetShader = new CelestialBodyShader("shader-vs", 'shader-fs', {
+    shaders.planetShader = new CelestialBodyShader("shader-vs", 'shader-fs', {
         "pointLightLocation": vec3.fromValues(0.0,0.0,0.0),
         "pointLightColor": vec3.fromValues(1.0,1.0,1.0),
         "materialShininess": 3.0,
@@ -57,161 +56,20 @@ function webGlStart()
         },
         "emissiveColor": vec3.fromValues(1.0,1.0,1.0)
     });
+    shaders.planetShader.init();
 
-    planetShader.init();
+    shaders.skyBoxShader = new BasicShader("basic-vs", 'basic-fs');
+    shaders.skyBoxShader.init();
 
-    sol = new CelestialBody({
-        "shader": planetShader,
-        "shaderUniforms": {
-            "textures": {
-                "texture": textureLoader.textures.sun,
-            },
-            "isLightSource": true
-        },
-        "dimensions": {
-            "latitude": 60,
-            "longitude": 60,
-            "radius": 50,
-        },
-    });
-
-    sol.setRotation({
-        "speed": [0,15,0],
-        "tilt": 0
-    });
-
-    earth = new CelestialBody({
-        "shader": planetShader,
-        "shaderUniforms": {
-            "textures": {
-                "texture": textureLoader.textures.earth,
-                "useDarkTexture": true,
-                "textureDark": textureLoader.textures.earthDark,
-                "useAtmosphere": true,
-                "textureAtmosphere": textureLoader.textures.earthAtmosphere,
-            }
-        },
-        "atmosphereRotationSpeed": 0.005,
-        "dimensions": {
-            "latitude": 30,
-            "longitude": 30,
-            "radius": 5,
-        }
-    });
-
-    earth.setRotation({
-        "speed": [0,25,0],
-        "tilt": -23
-    });
-
-    earth.setOrbit({
-        "radius": 250,
-        "velocity": 0.0005,
-        "eccentricity": 0,
-        "axis": 0,
-        "tilt": -5
-    });
-
-    sol.addChild(earth);
-
-    moon = new CelestialBody({
-        "shader": planetShader,
-        "shaderUniforms": {
-            "textures":
-            {
-                "texture": textureLoader.textures.moon,
-            }
-        },
-        "dimensions": {
-            "latitude": 30,
-            "longitude": 30,
-            "radius": 1,
-        }
-    });
-
-    moon.setRotation({
-        "speed": [0,35,0],
-        "tilt": 0
-    });
-
-    moon.setOrbit({
-        "radius": 10,
-        "velocity": 0.01,
-        "eccentricity": 0.5,
-        "axis": 0,
-        "tilt": -45
-    });
-
-    earth.addChild(moon);
-
-    saturn = new CelestialBody({
-        "shader": planetShader,
-        "shaderUniforms": {
-            "textures":{
-                "texture": textureLoader.textures.saturn,
-            },
-        },
-        "dimensions": {
-            "latitude": 30,
-            "longitude": 30,
-            "radius": 10,
-        }
-    });
-
-    saturn.setOrbit({
-        "radius": 750,
-        "velocity": 0.0,
-        "eccentricity": 0,
-        "axis": 0,
-        "tilt": 0
-    });
-
-
-    rings = new Rings({
-        "shader": planetShader,
-        "shaderUniforms": {
-            "textures": {
-                "texture": textureLoader.textures.saturnsRings
-            },
-            "lightingParameters": {
-                "ambientColor": vec3.fromValues(1.0,1.0,1.0),
-                "alpha": 0.8
-            }
-        },
-        "isBlended": true
-    });
-
-    saturn.addChild(rings);
-    sol.addChild(saturn);
-
-    majorPlanets.push(sol);
-    majorPlanets.push(earth);
-    majorPlanets.push(saturn);
-
-
-    camera.setFocussedObject(sol);
-    solarSystem.addDrawableObject(sol);
-
-
-    var skyBoxShader = new BasicShader("basic-vs", 'basic-fs');
-    skyBoxShader.init();
-
-    skyBox = new SkyBox({
-        "shader": skyBoxShader,
-        "shaderUniforms": {
-            "textures": {
-                "texture": textureLoader.textures.skybox,
-            },
-            "lightingParameters": {
-                "ambientColor": vec3.fromValues(0.5,0.5,0.5),
-            }
-        }
-    });
-
-    solarSystem.addDrawableObject(skyBox);
-
+    solarSystem = new SceneGraph(config);
     solarSystem.initBuffers();
 
+    var sol = solarSystem.drawableObjects[0];
+    majorPlanets = sol.getChildren().slice(0);
+    majorPlanets.unshift(sol);
+    skyBox = solarSystem.drawableObjects[1];
+
+    camera.setFocussedObject(sol);
     tick();
 }
 
@@ -289,18 +147,18 @@ function parseMenuOptions()
 {
     //light intensity
     var intensity = parseFloat(document.getElementById("light-intensity").value) / 100.0;
-    planetShader.globalUniforms.pointLightColor = vec3.fromValues(intensity, intensity, intensity);
+    shaders.planetShader.globalUniforms.pointLightColor = vec3.fromValues(intensity, intensity, intensity);
 
     //material shininess
     var shininess = parseFloat(document.getElementById("light-shininess").value);
-    planetShader.globalUniforms.materialShininess = shininess;
+    shaders.planetShader.globalUniforms.materialShininess = shininess;
 
     //light attenuation
     var constantLightAttenuation = parseFloat(document.getElementById("light-attenuation-constant").value);
     var linearLightAttenuation = parseFloat(document.getElementById("light-attenuation-linear").value);
     var quadraticLightAttenuation = parseFloat(document.getElementById("light-attenuation-quadratic").value);
 
-    planetShader.globalUniforms.lightAttenuation.constant = constantLightAttenuation;
-    planetShader.globalUniforms.lightAttenuation.linear = linearLightAttenuation;
-    planetShader.globalUniforms.lightAttenuation.quadratic = quadraticLightAttenuation;
+    shaders.planetShader.globalUniforms.lightAttenuation.constant = constantLightAttenuation;
+    shaders.planetShader.globalUniforms.lightAttenuation.linear = linearLightAttenuation;
+    shaders.planetShader.globalUniforms.lightAttenuation.quadratic = quadraticLightAttenuation;
 }

@@ -1,0 +1,106 @@
+{
+    "sun": {
+        "model": "CelestialBody",
+        "dimensions": {
+            "latitude": 60,
+            "longitude": 60,
+            "radius": 50
+        },
+        "shader": "planetShader",
+        "shaderUniforms": {
+            "textures": {
+                "texture": "sun"
+            },
+            "isLightSource": true
+        },
+        "rotation": {
+            "speed": [
+                0,
+                20,
+                0
+            ],
+            "tilt": 0
+        },
+        "orbitals":{
+            "earth": {
+                "model": "CelestialBody",
+                "dimensions": {
+                    "latitude": 30,
+                    "longitude": 30,
+                    "radius": 5
+                },
+                "shader": "planetShader",
+                "shaderUniforms": {
+                    "textures": {
+                        "texture": "earth",
+                        "useDarkTexture": true,
+                        "textureDark": "earthDark",
+                        "useAtmosphere": true,
+                        "textureAtmosphere": "earthAtmosphere"
+                    }
+                },
+                "atmosphereRotationSpeed": 0.005,
+                "rotation": {
+                    "speed": [
+                        0,
+                        25,
+                        0
+                    ],
+                    "tilt": -23
+                },
+                "orbit": {
+                    "radius": 250,
+                    "velocity": 0.0005,
+                    "eccentricity": 0,
+                    "axis": 0,
+                    "tilt": -5
+                }
+            },
+            "saturn": {
+                "model": "CelestialBody",
+                "dimensions": {
+                    "latitude": 30,
+                    "longitude": 30,
+                    "radius": 10
+                },
+                "shader": "planetShader",
+                "shaderUniforms": {
+                    "textures": {
+                        "texture": "saturn"
+                    }
+                },
+                "rotation": {
+                    "speed": [
+                        0,
+                        25,
+                        0
+                    ],
+                    "tilt": -23
+                },
+                "orbit": {
+                    "radius": 750,
+                    "velocity": 0,
+                    "eccentricity": 0,
+                    "axis": 0,
+                    "tilt": 0
+                }
+            }
+        }
+    },
+    "skyBox": {
+        "model": "SkyBox",
+        "shader": "skyBoxShader",
+        "shaderUniforms": {
+            "textures": {
+                "texture": "skybox"
+            },
+            "lightingParameters": {
+                "ambientColor": [
+                    0.5,
+                    0.5,
+                    0.5
+                ]
+            }
+        }
+    }
+}

@@ -18,6 +18,9 @@ function CelestialBody(creationParams)
     this.orbit.tilt = 0;
 
     this.orbitals = [];
+
+    this.setRotation(creationParams.rotation);
+    this.setOrbit(creationParams.orbit);
 }
 
 CelestialBody.prototype.getCurrentPosition = function()
@@ -113,16 +116,22 @@ CelestialBody.prototype.addChild = function(orbital)
 
 CelestialBody.prototype.setRotation = function(params)
 {
-    this.rotationSpeed = params.speed;
-    this.axisTilt = params.tilt;
+    if(params)
+    {
+        this.rotationSpeed = params.speed;
+        this.axisTilt = params.tilt;
+    }
 };
 
 CelestialBody.prototype.setOrbit = function(params)
 {
-    this.orbit = params;
-    this.orbit.theta = 0;
-    this.orbit.currentRadius = params.radius;
-    this.positionVector[this.orbit.axis] = this.orbit.radius;
+    if(params)
+    {
+        this.orbit = params;
+        this.orbit.theta = 0;
+        this.orbit.currentRadius = params.radius;
+        this.positionVector[this.orbit.axis] = this.orbit.radius;
+    }
 };
 
 extend(Sphere, CelestialBody);
